@@ -1,6 +1,8 @@
+PLUGIN_NAME=$$(basename `git rev-parse --show-toplevel` .vim)
+
 .PHONY: init
 init:
-	@repo=$$(basename `git rev-parse --show-toplevel`) && repo=($${repo/-/ }) && repo=$${repo[1]/\.*/ } && mv denops/template denops/$${repo}
+	@mv denops/template denops/$(PLUGIN_NAME)
 
 .PHONY: coverage
 coverage: test-local
@@ -17,4 +19,4 @@ test:
 
 .PHONY: deps
 deps:
-	@deno run -A https://deno.land/x/udd@0.7.3/main.ts denops/template/deps.ts
+	@deno run -A https://deno.land/x/udd@0.7.3/main.ts denops/$(PLUGIN_NAME)/deps.ts
