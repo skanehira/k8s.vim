@@ -20,3 +20,13 @@ test:
 .PHONY: deps
 deps:
 	@deno run -A https://deno.land/x/udd@0.7.3/main.ts denops/$(PLUGIN_NAME)/deps.ts
+
+.PHONY: gen
+gen:
+	@docker run --rm -v $$PWD:/local -w /local openapitools/openapi-generator-cli generate \
+		--skip-operation-example \
+		--additional-properties=platform=deno \
+		--global-property models \
+		-g typescript \
+		-i denops/k8s/swagger.json \
+		-o /local/denops/k8s
