@@ -1,17 +1,30 @@
-import { autocmd, Denops } from "./deps.ts";
+import { autocmd, batch, Denops } from "./deps.ts";
 import {
   actionDescribePod,
   actionGetPodContainers,
   actionGetPodList,
   actionGetResourceAsYaml,
 } from "./action_pod.ts";
+import { actionGetNodeList } from "./action_node.ts";
 
 export async function main(denops: Denops): Promise<void> {
-  await denops.cmd(
-    `command! K8sPods :drop k8s://all/pods<CR>`,
-  );
+  const cmds = [
+    "command! K8sPods :drop k8s://all/pods<CR>",
+    "command! K8sNodes :drop k8s://nodes<CR>",
+  ];
+  await batch(denops, async (denops) => {
+    for (const cmd of cmds) {
+      await denops.cmd(cmd);
+    }
+  });
 
   await autocmd.group(denops, "k8s_buffer", (helper) => {
+    helper.define(
+      "BufReadCmd",
+      "k8s://nodes",
+      `call denops#request("${denops.name}", "nodes", []) | redraw!`,
+    );
+
     helper.define(
       "BufReadCmd",
       "k8s://*/pods",
@@ -38,6 +51,10 @@ export async function main(denops: Denops): Promise<void> {
   });
 
   denops.dispatcher = {
+    async nodes(): Promise<void> {
+      await actionGetNodeList(denops);
+    },
+
     async pods(): Promise<void> {
       const bufname = await denops.call("bufname") as string;
       const result = bufname.match(/k8s:\/\/(.*)\/pods/);
