@@ -25,7 +25,7 @@ function! k8s#pod#logs() abort
   call k8s#util#terminal#run('kubectl', 'logs', '-f', '-n', namespace, 'pods/' .. name)
 endfunction
 
-function! k8s#pod#container_attach() abort
+function! k8s#pod#shell() abort
   let namespace = b:k8s_pod.metadata.namespace
   if len(b:k8s_pod.spec.containers) ==# 0
     return
