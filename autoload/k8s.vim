@@ -8,6 +8,7 @@ let s:action_list = {
       \ 'pods:containers:attach': function('k8s#pod#container_attach'),
       \ 'pods:describe': function('k8s#pod#describe'),
       \ 'pods:yaml': function('k8s#pod#yaml'),
+      \ 'nodes:describe': function('k8s#node#describe'),
       \ }
 
 function! k8s#do_action(action) abort

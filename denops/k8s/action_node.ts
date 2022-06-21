@@ -24,3 +24,15 @@ export async function actionGetNodeList(denops: Denops): Promise<void> {
     "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-nodes",
   );
 }
+
+export async function actionDescribeNode(
+  denops: Denops,
+  name: string,
+): Promise<void> {
+  const output = await node.describe(name);
+  await denops.cmd("setlocal modifiable");
+  await denops.call("setline", 1, output.split("\n"));
+  await denops.cmd(
+    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-node-describe",
+  );
+}

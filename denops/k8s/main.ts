@@ -1,11 +1,6 @@
 import { autocmd, batch, Denops } from "./deps.ts";
-import {
-  actionDescribePod,
-  actionGetPodContainers,
-  actionGetPodList,
-  actionGetResourceAsYaml,
-} from "./action_pod.ts";
-import { actionGetNodeList } from "./action_node.ts";
+import * as pod from "./action_pod.ts";
+import * as node from "./action_node.ts";
 
 export async function main(denops: Denops): Promise<void> {
   const cmds = [
@@ -19,6 +14,12 @@ export async function main(denops: Denops): Promise<void> {
   });
 
   await autocmd.group(denops, "k8s_buffer", (helper) => {
+    helper.define(
+      "BufReadCmd",
+      "k8s://nodes/*",
+      `call denops#request("${denops.name}", "describe", ["node"]) | redraw!`,
+    );
+
     helper.define(
       "BufReadCmd",
       "k8s://nodes",
@@ -40,7 +41,7 @@ export async function main(denops: Denops): Promise<void> {
     helper.define(
       "BufReadCmd",
       "k8s://*/pods/*/describe",
-      `call denops#request("${denops.name}", "describe", []) | redraw!`,
+      `call denops#request("${denops.name}", "describe", ["pod"]) | redraw!`,
     );
 
     helper.define(
@@ -52,7 +53,7 @@ export async function main(denops: Denops): Promise<void> {
 
   denops.dispatcher = {
     async nodes(): Promise<void> {
-      await actionGetNodeList(denops);
+      await node.actionGetNodeList(denops);
     },
 
     async pods(): Promise<void> {
@@ -67,7 +68,7 @@ export async function main(denops: Denops): Promise<void> {
         console.log("invalid namespace");
         return;
       }
-      await actionGetPodList(denops, namespace);
+      await pod.actionGetPodList(denops, namespace);
     },
 
     async containers(): Promise<void> {
@@ -82,25 +83,36 @@ export async function main(denops: Denops): Promise<void> {
         console.error("invalid pod name");
         return;
       }
-      await actionGetPodContainers(denops, {
+      await pod.actionGetPodContainers(denops, {
         namespace: namespace,
         name: podName,
       });
     },
 
-    async describe(): Promise<void> {
-      const bufname = await denops.call("bufname") as string;
-      const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/describe/);
-      if (!result) {
-        console.error("invalid buffer name");
-        return;
+    async describe(resourceType: unknown): Promise<void> {
+      if (resourceType === "pod") {
+        const bufname = await denops.call("bufname") as string;
+        const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/describe/);
+        if (!result) {
+          console.error("invalid buffer name");
+          return;
+        }
+        const [namespace, podName] = result.slice(1);
+        if (!namespace || !podName) {
+          console.error("invalid pod name");
+          return;
+        }
+        await pod.actionDescribePod(denops, podName, { namespace });
+      } else if (resourceType === "node") {
+        const bufname = await denops.call("bufname") as string;
+        const result = bufname.match(/k8s:\/\/nodes\/(.*)\/describe/);
+        if (!result) {
+          console.error("invalid buffer name");
+          return;
+        }
+        const nodeName = result[1];
+        await node.actionDescribeNode(denops, nodeName);
       }
-      const [namespace, podName] = result.slice(1);
-      if (!namespace || !podName) {
-        console.error("invalid pod name");
-        return;
-      }
-      await actionDescribePod(denops, podName, { namespace });
     },
 
     async getPodAsYaml(): Promise<void> {
@@ -115,7 +127,7 @@ export async function main(denops: Denops): Promise<void> {
         console.error("invalid pod name");
         return;
       }
-      await actionGetResourceAsYaml(denops, podName, { namespace });
+      await pod.actionGetResourceAsYaml(denops, podName, { namespace });
     },
   };
 }
