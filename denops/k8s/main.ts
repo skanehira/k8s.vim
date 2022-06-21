@@ -16,7 +16,7 @@ export async function main(denops: Denops): Promise<void> {
   await autocmd.group(denops, "k8s_buffer", (helper) => {
     helper.define(
       "BufReadCmd",
-      "k8s://nodes/*",
+      "k8s://nodes/*/describe",
       `call denops#request("${denops.name}", "describe", ["node"]) | redraw!`,
     );
 
