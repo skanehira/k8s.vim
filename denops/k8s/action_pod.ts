@@ -16,10 +16,11 @@ export async function actionGetPodList(
       pod.metadata?.name ?? "<unknown>",
       pod.status?.phase ?? "<unknown>",
       podIPs?.join(" ") ?? "<unknown>",
+      pod.spec?.nodeName ?? "<unknown>",
       pod.status?.startTime?.toLocaleString() ?? "<unknown>",
     ];
   });
-  const header = ["NAMESPACE", "NAME", "STATUS", "IP", "START TIME"];
+  const header = ["NAMESPACE", "NAME", "STATUS", "IP", "NODE", "START TIME"];
   const table = new Table();
   table.header(header)
     .body(body);
