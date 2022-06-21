@@ -51,3 +51,14 @@ function! k8s#pod#describe() abort
   endif
   exe printf('%s k8s://%s/pods/%s/describe', open, namespace, name)
 endfunction
+
+function! k8s#pod#yaml() abort
+  let pod = b:k8s_pods[line('.')-2]
+  let namespace = pod.metadata.namespace
+  let name = pod.metadata.name
+  let open = k8s#util#window#open()
+  if open ==# ''
+    return
+  endif
+  exe printf('%s k8s://%s/pods/%s/yaml', open, namespace, name)
+endfunction

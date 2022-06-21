@@ -3,6 +3,7 @@ import {
   actionDescribePod,
   actionGetPodContainers,
   actionGetPodList,
+  actionGetResourceAsYaml,
 } from "./action_pod.ts";
 
 export async function main(denops: Denops): Promise<void> {
@@ -27,6 +28,12 @@ export async function main(denops: Denops): Promise<void> {
       "BufReadCmd",
       "k8s://*/pods/*/describe",
       `call denops#request("${denops.name}", "describe", []) | redraw!`,
+    );
+
+    helper.define(
+      "BufReadCmd",
+      "k8s://*/pods/*/yaml",
+      `call denops#request("${denops.name}", "getPodAsYaml", []) | redraw!`,
     );
   });
 
@@ -77,6 +84,21 @@ export async function main(denops: Denops): Promise<void> {
         return;
       }
       await actionDescribePod(denops, podName, { namespace });
+    },
+
+    async getPodAsYaml(): Promise<void> {
+      const bufname = await denops.call("bufname") as string;
+      const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/yaml/);
+      if (!result) {
+        console.error("invalid buffer name");
+        return;
+      }
+      const [namespace, podName] = result.slice(1);
+      if (!namespace || !podName) {
+        console.error("invalid pod name");
+        return;
+      }
+      await actionGetResourceAsYaml(denops, podName, { namespace });
     },
   };
 }

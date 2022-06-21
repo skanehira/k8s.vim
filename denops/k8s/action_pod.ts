@@ -97,3 +97,18 @@ export async function actionDescribePod(
     "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-pod-describe",
   );
 }
+
+export async function actionGetResourceAsYaml(
+  denops: Denops,
+  name: string,
+  opts: {
+    namespace: string;
+  },
+): Promise<void> {
+  const output = await pod.getAsYaml(name, opts);
+  await denops.cmd("setlocal modifiable");
+  await denops.call("setline", 1, output.split("\n"));
+  await denops.cmd(
+    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=yaml | nnoremap <buffer> q :bw!<CR>",
+  );
+}

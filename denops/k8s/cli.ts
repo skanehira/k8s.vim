@@ -24,24 +24,40 @@ export async function run(cmd: string[]): Promise<string> {
   return result;
 }
 
-export async function getResource<T>(resource: string, opts?: {
+export interface ResourceOptions {
   all?: boolean;
   namespace?: string;
-}): Promise<T> {
+  format?: "json" | "yaml";
+}
+
+export async function getResourceAsText(
+  resource: string,
+  opts: ResourceOptions,
+): Promise<string> {
   const cmd = [
     "kubectl",
     "get",
     resource,
-    "-o",
-    "json",
   ];
-  if (opts?.all) {
+  if (opts.all) {
     cmd.push("-A");
   }
-  if (opts?.namespace) {
+  if (opts.namespace) {
     cmd.push("-n", opts.namespace);
   }
+  if (opts.format) {
+    cmd.push("-o", opts.format);
+  }
   const output = await run(cmd);
+  return output;
+}
+
+export async function getResourceAsObject<T>(
+  resource: string,
+  opts: ResourceOptions,
+): Promise<T> {
+  opts.format = "json";
+  const output = await getResourceAsText(resource, opts);
   return JSON.parse(output);
 }
 
