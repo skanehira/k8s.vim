@@ -37,6 +37,17 @@ function! k8s#pod#container_attach() abort
     return
   endif
   exe open
-  call k8s#util#terminal#run('kubectl', 'exec', '-n', namespace, '-it', 'pods/' .. pod_name, 
+  call k8s#util#terminal#run('kubectl', 'exec', '-n', namespace, '-it', 'pods/' .. pod_name,
         \ '--container', container.name, '--', 'sh')
+endfunction
+
+function! k8s#pod#describe() abort
+  let pod = b:k8s_pods[line('.')-2]
+  let namespace = pod.metadata.namespace
+  let name = pod.metadata.name
+  let open = k8s#util#window#open()
+  if open ==# ''
+    return
+  endif
+  exe printf('%s k8s://%s/pods/%s/describe', open, namespace, name)
 endfunction

@@ -3,9 +3,10 @@
 " License: MIT
 
 let s:action_list = {
-      \ 'pods:containers': function('k8s#pod#containers'),
       \ 'pods:logs': function('k8s#pod#logs'),
-      \ 'pods:containers:attach': function('k8s#pod#container_attach')
+      \ 'pods:containers': function('k8s#pod#containers'),
+      \ 'pods:containers:attach': function('k8s#pod#container_attach'),
+      \ 'pods:describe': function('k8s#pod#describe'),
       \ }
 
 function! k8s#do_action(action) abort

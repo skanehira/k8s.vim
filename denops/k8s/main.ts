@@ -1,5 +1,9 @@
 import { autocmd, Denops } from "./deps.ts";
-import { actionGetPodContainers, actionGetPodList } from "./action_pod.ts";
+import {
+  actionDescribePod,
+  actionGetPodContainers,
+  actionGetPodList,
+} from "./action_pod.ts";
 
 export async function main(denops: Denops): Promise<void> {
   await denops.cmd(
@@ -17,6 +21,12 @@ export async function main(denops: Denops): Promise<void> {
       "BufReadCmd",
       "k8s://*/pods/*/containers",
       `call denops#request("${denops.name}", "containers", []) | redraw!`,
+    );
+
+    helper.define(
+      "BufReadCmd",
+      "k8s://*/pods/*/describe",
+      `call denops#request("${denops.name}", "describe", []) | redraw!`,
     );
   });
 
@@ -40,7 +50,7 @@ export async function main(denops: Denops): Promise<void> {
       const bufname = await denops.call("bufname") as string;
       const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/containers/);
       if (!result) {
-        console.log("invalid buffer name");
+        console.error("invalid buffer name");
         return;
       }
       const [namespace, podName] = result.slice(1);
@@ -52,6 +62,21 @@ export async function main(denops: Denops): Promise<void> {
         namespace: namespace,
         name: podName,
       });
+    },
+
+    async describe(): Promise<void> {
+      const bufname = await denops.call("bufname") as string;
+      const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/describe/);
+      if (!result) {
+        console.error("invalid buffer name");
+        return;
+      }
+      const [namespace, podName] = result.slice(1);
+      if (!namespace || !podName) {
+        console.error("invalid pod name");
+        return;
+      }
+      await actionDescribePod(denops, podName, { namespace });
     },
   };
 }

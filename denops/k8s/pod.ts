@@ -1,4 +1,4 @@
-import { getResource } from "./cli.ts";
+import { describeResource, getResource } from "./cli.ts";
 import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
 
 export async function list(opts: {
@@ -22,4 +22,11 @@ export async function get(name: string, opts: {
 }): Promise<IoK8sApiCoreV1Pod> {
   const pod = await getResource<IoK8sApiCoreV1Pod>(`pods/${name}`, opts);
   return pod;
+}
+
+export async function describe(name: string, opts: {
+  namespace: string;
+}): Promise<string> {
+  const output = await describeResource("pods", name, opts);
+  return output;
 }

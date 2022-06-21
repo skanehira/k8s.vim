@@ -44,3 +44,23 @@ export async function getResource<T>(resource: string, opts?: {
   const output = await run(cmd);
   return JSON.parse(output);
 }
+
+export async function describeResource(resource: string, name: string, opts?: {
+  all?: boolean;
+  namespace?: string;
+}): Promise<string> {
+  const cmd = [
+    "kubectl",
+    "describe",
+    resource,
+    name,
+  ];
+  if (opts?.all) {
+    cmd.push("-A");
+  }
+  if (opts?.namespace) {
+    cmd.push("-n", opts.namespace);
+  }
+  const output = await run(cmd);
+  return output;
+}
