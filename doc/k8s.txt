@@ -1,0 +1,141 @@
+*k8s.txt*	Plugin for kubernetes
+
+Author: skanehira <sho19921005@gmail.com>
+License : MIT license  {{{
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
+    The above copyright notice and this permission notice shall be included
+    in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+}}}
+
+==============================================================================
+CONTENTS					*k8s-contents*
+
+INTRODUCTION			|k8s-introduction|
+USAGE				|k8s-usage|
+INTERFACE			|k8s-interface|
+  COMMANDS			  |k8s-commands|
+  VARIABLES			  |k8s-variables|
+  BUFFER			  |k8s-buffers|
+  KEY-MAPPINGS			  |k8s-key-mappings|
+  FUNCTIONS			  |k8s-functions|
+TODO				|k8s-todo|
+CHANGELOG			|k8s-changelog|
+
+
+==============================================================================
+INTRODUCTION					*k8s-introduction*
+
+*k8s.vim* is a Vim/Neovim plugin for kubernets
+
+Latest version:
+https://github.com/skanehira/k8s.vim
+
+
+==============================================================================
+USAGE						*k8s-usage*
+
+==============================================================================
+INTERFACE					*k8s-interface*
+
+------------------------------------------------------------------------------
+VARIABLES					*k8s-variables*
+
+------------------------------------------------------------------------------
+COMMANDS					*k8s-commands*
+>
+:K8sPods					*:K8sPods*
+  Open buffer of |k8s-pods|
+
+:K8sNodes					*K8sNodes*
+  Open buffer of |k8s-nodes|
+
+------------------------------------------------------------------------------
+BUFFER							*k8s-buffers*
+
+k8s://{namespace}/pods					*k8s-buffer-pods*
+  Show {namespace}'s pods.
+
+  NOTE: if {namespace} is `all`, all pods will be displayed.
+
+k8s://{namespace}/pods/{pod}/containers			*k8s-buffer-containers*
+  Show {pod}'s containers.
+
+k8s://{namespace}/pods/{pod}/describe			*k8s-buffer-pod-describe*
+  Describe {pod}.
+
+k8s://{namespace}/pods/{pod}/yaml			*k8s-buffer-pod-yaml*
+  Show {pod}'s yaml.
+
+k8s://nodes						*k8s-buffer-nodes*
+  Show nodes.
+
+k8s://nodes/{node}/describe				*k8s-buffer-node-describe*
+  Describe {node}.
+
+------------------------------------------------------------------------------
+KEY-MAPPINGS						*k8s-key-mappings*
+
+k8s.vim provide some plugin keymaps.
+You can define your own keymaps like bellow.
+
+>
+  function! s:k8s_pods_keymap() abort
+    nmap <buffer> <CR> <Plug>(k8s:pods:containers)
+    nmap <buffer> <C-g><C-l> <Plug>(k8s:pods:logs)
+    nmap <buffer> <C-g><C-d> <Plug>(k8s:pods:describe)
+    nmap <buffer> <C-g><C-y> <Plug>(k8s:pods:yaml)
+  endfunction
+
+  augroup k8s-keymap
+    au!
+    au FileType k8s-pods call s:k8s_pods_keymap()
+  augroup END
+<
+
+							*k8s-nodes-key-mappings*
+*<Plug>(k8s:nodes:describe)*
+  Describe node
+
+							*k8s-containers-key-mappings*
+*<Plug>(k8s:pods:containers:shell)*
+  Run `/bin/sh` in container.
+
+							*k8s-opds-key-mappings*
+*<Plug>(k8s:pods:containers)*
+  Open |k8s-buffer-containers|.
+
+*<Plug>(k8s:pods:logs)*
+  Show pod's logs.
+
+*<Plug>(k8s:pods:describe)*
+  Open |k8s-buffer-pod-describe|.
+
+*<Plug>(k8s:pods:yaml)*
+  Open |k8s-buffer-pod-yaml|.
+
+------------------------------------------------------------------------------
+FUNCTIONS					*k8s-functions*
+
+==============================================================================
+TODO						*k8s-todo*
+
+==============================================================================
+CHANGELOG					*k8s-changelog*
+
+
+==============================================================================
+vim:tw=85:ts=8:ft=help:norl:noet:fen:
