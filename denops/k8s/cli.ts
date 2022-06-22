@@ -19,7 +19,8 @@ export async function run(cmd: string[]): Promise<string> {
     );
   }
 
-  p.stderr?.close();
+  p.stderr!.close();
+  p.stdout!.close();
   p.close();
   return result;
 }
