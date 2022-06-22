@@ -1,14 +1,9 @@
 import * as pod from "./pod.ts";
-import { Denops, Table, vars } from "./deps.ts";
+import { batch, Denops, Table, vars } from "./deps.ts";
+import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
+import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
 
-export async function actionGetPodList(
-  denops: Denops,
-  namespace: string,
-): Promise<void> {
-  const pods = await pod.list({
-    namespace: namespace,
-  });
-  await vars.b.set(denops, "k8s_pods", pods);
+export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
   const body = pods.map((pod) => {
     const podIPs = pod.status?.podIPs?.map((podip) => podip.ip ?? "");
     return [
@@ -25,30 +20,33 @@ export async function actionGetPodList(
   table.header(header)
     .body(body);
 
-  await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, table.toString().split("\n"));
-  await denops.cmd(
-    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-pods",
-  );
+  return table.toString().split("\n");
 }
 
-export async function actionGetPodContainers(
+export async function actionGetPodList(
   denops: Denops,
-  opts: {
-    namespace: string;
-    name: string;
-  },
+  namespace: string,
 ): Promise<void> {
-  const p = await pod.get(opts.name, {
-    namespace: opts.namespace,
+  const pods = await pod.list({
+    namespace: namespace,
   });
-  await vars.b.set(denops, "k8s_pod", p);
+  await vars.b.set(denops, "k8s_pods", pods);
+  const rows = renderPodList(pods);
+
+  await batch(denops, async (denops) => {
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, rows);
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-pods",
+    );
+  });
+}
+
+export function renderContainerList(
+  containers: IoK8sApiCoreV1ContainerStatus[],
+): string[] {
   const header = ["NAME", "IMAGE", "READY", "STATE", "START TIME"];
-  if (!p.status?.containerStatuses) {
-    console.warn("no containers");
-    return;
-  }
-  const body = p.status.containerStatuses.map((con) => {
+  const body = containers.map((con) => {
     let state = "<unknown>";
     let startTime = "";
     if (con.state?.running) {
@@ -76,8 +74,28 @@ export async function actionGetPodContainers(
   table.header(header)
     .body(body);
 
+  return table.toString().split("\n");
+}
+
+export async function actionGetPodContainers(
+  denops: Denops,
+  opts: {
+    namespace: string;
+    name: string;
+  },
+): Promise<void> {
+  const p = await pod.get(opts.name, {
+    namespace: opts.namespace,
+  });
+  await vars.b.set(denops, "k8s_pod", p);
+  if (!p.status?.containerStatuses) {
+    console.warn("no containers");
+    return;
+  }
+
+  const rows = renderContainerList(p.status.containerStatuses);
   await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, table.toString().split("\n"));
+  await denops.call("setline", 1, rows);
   await denops.cmd(
     "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-containers",
   );
