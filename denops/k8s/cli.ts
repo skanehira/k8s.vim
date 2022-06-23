@@ -27,6 +27,7 @@ export async function run(cmd: string[]): Promise<string> {
 export interface ResourceOptions {
   all?: boolean;
   namespace?: string;
+  node?: string;
   format?: "json" | "yaml";
 }
 
