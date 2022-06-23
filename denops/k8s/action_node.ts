@@ -1,9 +1,10 @@
 import { Denops, Table, vars } from "./deps.ts";
 import * as node from "./node.ts";
+import { IoK8sApiCoreV1Node } from "./models/IoK8sApiCoreV1Node.ts";
 
-export async function actionGetNodeList(denops: Denops): Promise<void> {
-  const nodes = await node.list();
-  await vars.b.set(denops, "k8s_nodes", nodes);
+export function renderNodeList(
+  nodes: IoK8sApiCoreV1Node[],
+): string[] {
   const body = nodes.map((node) => {
     return [
       node.metadata?.name ?? "<unknown>",
@@ -17,9 +18,17 @@ export async function actionGetNodeList(denops: Denops): Promise<void> {
   const table = new Table();
   table.header(header)
     .body(body);
+  return table.toString().split("\n");
+}
+
+export async function actionGetNodeList(denops: Denops): Promise<void> {
+  const nodes = await node.list();
+  await vars.b.set(denops, "k8s_nodes", nodes);
+
+  const rows = renderNodeList(nodes);
 
   await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, table.toString().split("\n"));
+  await denops.call("setline", 1, rows);
   await denops.cmd(
     "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-nodes",
   );
