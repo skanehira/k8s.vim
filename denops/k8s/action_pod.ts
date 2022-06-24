@@ -2,6 +2,102 @@ import * as pod from "./pod.ts";
 import { batch, Denops, Table, vars } from "./deps.ts";
 import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
 import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
+import { IoK8sApiCoreV1PodCondition } from "./models/IoK8sApiCoreV1PodCondition.ts";
+
+export function renderPodStatus(pod: IoK8sApiCoreV1Pod): string {
+  let status = pod.status?.phase as string ?? "Unknown";
+  if (pod.status?.reason) {
+    status = pod.status.reason;
+  }
+  let initializing = false;
+
+  if (pod.status?.initContainerStatuses) {
+    for (const [i, container] of pod.status.initContainerStatuses.entries()) {
+      if (
+        container.state?.terminated && container.state.terminated.exitCode === 0
+      ) {
+        continue;
+      }
+      if (container.state?.terminated) {
+        initializing = true;
+        if (container.state.terminated.reason) {
+          status = container.state.terminated.reason;
+        } else {
+          if (container.state.terminated.signal !== 0) {
+            status = `Init:Signal:${container.state.terminated.signal}`;
+          } else {
+            status = `Init:Signal:${container.state.terminated.exitCode}`;
+          }
+        }
+      } else if (container.state?.waiting) {
+        initializing = true;
+        const reason = container.state.waiting?.reason;
+        if (reason && reason !== "PodInitializing") {
+          status = "Init:${reason}";
+        }
+      } else {
+        initializing = true;
+        status = `Init:${i}/${pod.spec?.initContainers?.length}`;
+      }
+      break;
+    }
+  }
+
+  if (!initializing && pod.status?.containerStatuses) {
+    let hasRunning = false;
+    const containers = pod.status.containerStatuses;
+
+    for (let i = containers.length - 1; i >= 0; i--) {
+      const container = containers[i];
+      if (!container.state) {
+        continue;
+      }
+      const state = container.state;
+      if (state.waiting && state.waiting.reason) {
+        status = state.waiting.reason;
+      } else if (state.terminated && state.terminated.reason) {
+        status = state.terminated.reason;
+      } else if (state.terminated && state.terminated.reason !== "") {
+        if (state.terminated.signal != 0) {
+          status = `Signal:${state.terminated.signal}`;
+        } else {
+          status = `ExitCode:${state.terminated.exitCode}`;
+        }
+      } else if (container.ready && state.running) {
+        hasRunning = true;
+      }
+    }
+
+    if (status === "Completed" && hasRunning && pod.status?.conditions) {
+      if (hasPodReadyCondition(pod.status.conditions)) {
+        status = "Running";
+      } else {
+        status = "NotReady";
+      }
+    }
+  }
+
+  if (pod.metadata?.deletionTimestamp) {
+    if (pod.status?.reason === "NodeLost") {
+      status = "Unknown";
+    } else {
+      status = "Terminating";
+    }
+  }
+
+  return status;
+}
+
+function hasPodReadyCondition(
+  conditions: IoK8sApiCoreV1PodCondition[],
+): boolean {
+  for (const condition of conditions) {
+    if (condition.type === "Ready" && condition.status === "True") {
+      return true;
+    }
+  }
+  return false;
+}
 
 export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
   const body = pods.map((pod) => {
@@ -9,7 +105,7 @@ export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
     return [
       pod.metadata?.namespace ?? "<unknown>",
       pod.metadata?.name ?? "<unknown>",
-      pod.status?.phase ?? "<unknown>",
+      renderPodStatus(pod),
       podIPs?.join(" ") ?? "<unknown>",
       pod.spec?.nodeName ?? "<unknown>",
       pod.status?.startTime?.toLocaleString() ?? "<unknown>",

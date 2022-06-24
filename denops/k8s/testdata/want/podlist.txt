@@ -1,0 +1,12 @@
+NAMESPACE NAME                               STATUS                 IP          NODE               START TIME           
+default   test8                              Init:0/1               10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   test7                              Running                10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   test6                              NotReady               10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   test5                              pod reason             10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   test4                              Failed                 10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   test3                              ContainerWaitingReason 10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   test2                              ContainerWaitingReason 10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   test1                              Pending                10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   sample-deployment-76f47c6756-7976d Running                10.244.0.86 kind-control-plane 6/24/2022, 3:29:59 PM
+default   sample-deployment-76f47c6756-8rj2d Running                10.244.0.88 kind-control-plane 6/24/2022, 3:29:59 PM
+default   sample-deployment-76f47c6756-jggq9 Running                10.244.0.87 kind-control-plane 6/24/2022, 3:29:59 PM
