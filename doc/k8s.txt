@@ -116,6 +116,13 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:deployments:describe)*
   Describe deployment.
 
+*<Plug>(k8s:deployments:edit)*
+  Edit deployment with $EDITOR in terminal.
+
+  NOTE: 
+    If you want to edit in current vim instance,
+    please use https://github.com/lambdalisue/guise.vim
+
 							*k8s-nodes-key-mappings*
 *<Plug>(k8s:nodes:describe)*
   Describe node
