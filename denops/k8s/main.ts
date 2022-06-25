@@ -27,7 +27,7 @@ export async function main(denops: Denops): Promise<void> {
     helper.define(
       "BufReadCmd",
       "k8s://nodes/*/describe",
-      `call denops#request("${denops.name}", "describe", ["node"]) | redraw!`,
+      `call denops#request("${denops.name}", "describeNode", []) | redraw!`,
     );
 
     helper.define(
@@ -51,7 +51,7 @@ export async function main(denops: Denops): Promise<void> {
     helper.define(
       "BufReadCmd",
       "k8s://*/pods/*/describe",
-      `call denops#request("${denops.name}", "describe", ["pod"]) | redraw!`,
+      `call denops#request("${denops.name}", "describePod", []) | redraw!`,
     );
 
     helper.define(
@@ -69,7 +69,7 @@ export async function main(denops: Denops): Promise<void> {
     helper.define(
       "BufReadCmd",
       "k8s://*/deployments/*/describe",
-      `call denops#request("${denops.name}", "describe", ["deployment"]) | redraw!`,
+      `call denops#request("${denops.name}", "describeDeployment", []) | redraw!`,
     );
   });
 
@@ -126,45 +126,47 @@ export async function main(denops: Denops): Promise<void> {
       });
     },
 
-    async describe(resourceType: unknown): Promise<void> {
-      if (resourceType === "pod") {
-        const bufname = await denops.call("bufname") as string;
-        const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/describe/);
-        if (!result) {
-          console.error("invalid buffer name");
-          return;
-        }
-        const [namespace, podName] = result.slice(1);
-        if (!namespace || !podName) {
-          console.error("invalid pod name");
-          return;
-        }
-        await pod.actionDescribePod(denops, podName, { namespace });
-      } else if (resourceType === "node") {
-        const bufname = await denops.call("bufname") as string;
-        const result = bufname.match(/k8s:\/\/nodes\/(.*)\/describe/);
-        if (!result) {
-          console.error("invalid buffer name");
-          return;
-        }
-        const nodeName = result[1];
-        await node.actionDescribeNode(denops, nodeName);
-      } else if (resourceType === "deployment") {
-        const bufname = await denops.call("bufname") as string;
-        const result = bufname.match(
-          /k8s:\/\/(.*)\/deployments\/(.*)\/describe/,
-        );
-        if (!result) {
-          console.error("invalid buffer name");
-          return;
-        }
-        const [namespace, deploymentName] = result.slice(1);
-        if (!namespace || !deploymentName) {
-          console.error("invalid pod name");
-          return;
-        }
-        await deployment.actionDescribe(denops, deploymentName, { namespace });
+    async describeNode(): Promise<void> {
+      const bufname = await denops.call("bufname") as string;
+      const result = bufname.match(/k8s:\/\/nodes\/(.*)\/describe/);
+      if (!result) {
+        console.error("invalid buffer name");
+        return;
       }
+      const nodeName = result[1];
+      await node.actionDescribeNode(denops, nodeName);
+    },
+
+    async describePod(): Promise<void> {
+      const bufname = await denops.call("bufname") as string;
+      const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/describe/);
+      if (!result) {
+        console.error("invalid buffer name");
+        return;
+      }
+      const [namespace, podName] = result.slice(1);
+      if (!namespace || !podName) {
+        console.error("invalid pod name");
+        return;
+      }
+      await pod.actionDescribePod(denops, podName, { namespace });
+    },
+
+    async describeDeployment(): Promise<void> {
+      const bufname = await denops.call("bufname") as string;
+      const result = bufname.match(
+        /k8s:\/\/(.*)\/deployments\/(.*)\/describe/,
+      );
+      if (!result) {
+        console.error("invalid buffer name");
+        return;
+      }
+      const [namespace, deploymentName] = result.slice(1);
+      if (!namespace || !deploymentName) {
+        console.error("invalid pod name");
+        return;
+      }
+      await deployment.actionDescribe(denops, deploymentName, { namespace });
     },
 
     async getPodAsYaml(): Promise<void> {
