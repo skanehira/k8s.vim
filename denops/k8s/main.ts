@@ -57,6 +57,12 @@ export async function main(denops: Denops): Promise<void> {
       "k8s://*/deployments",
       `call denops#request("${denops.name}", "deployments", []) | redraw!`,
     );
+
+    helper.define(
+      "BufReadCmd",
+      "k8s://*/deployments/*/describe",
+      `call denops#request("${denops.name}", "describe", ["deployment"]) | redraw!`,
+    );
   });
 
   denops.dispatcher = {
@@ -135,6 +141,21 @@ export async function main(denops: Denops): Promise<void> {
         }
         const nodeName = result[1];
         await node.actionDescribeNode(denops, nodeName);
+      } else if (resourceType === "deployment") {
+        const bufname = await denops.call("bufname") as string;
+        const result = bufname.match(
+          /k8s:\/\/(.*)\/deployments\/(.*)\/describe/,
+        );
+        if (!result) {
+          console.error("invalid buffer name");
+          return;
+        }
+        const [namespace, deploymentName] = result.slice(1);
+        if (!namespace || !deploymentName) {
+          console.error("invalid pod name");
+          return;
+        }
+        await deployment.actionDescribe(denops, deploymentName, { namespace });
       }
     },
 

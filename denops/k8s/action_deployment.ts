@@ -46,3 +46,20 @@ export async function actionGetList(
     );
   });
 }
+
+export async function actionDescribe(
+  denops: Denops,
+  name: string,
+  opts: {
+    namespace: string;
+  },
+): Promise<void> {
+  const output = await deployment.describe(name, opts.namespace);
+  batch(denops, async (denops) => {
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, output.split("\n"));
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-deployment-describe",
+    );
+  });
+}
