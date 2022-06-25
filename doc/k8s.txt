@@ -112,6 +112,10 @@ You can define your own keymaps like bellow.
   augroup END
 <
 
+							*k8s-deployments-key-mappings*
+*<Plug>(k8s:deployments:describe)*
+  Describe deployment.
+
 							*k8s-nodes-key-mappings*
 *<Plug>(k8s:nodes:describe)*
   Describe node

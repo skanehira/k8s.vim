@@ -10,6 +10,7 @@ let s:action_list = {
       \ 'pods:yaml': function('k8s#pod#yaml'),
       \ 'pods:delete': function('k8s#pod#delete'),
       \ 'nodes:describe': function('k8s#node#describe'),
+      \ 'deployments:describe': function('k8s#deployment#describe'),
       \ }
 
 function! k8s#do_action(action) abort
