@@ -15,7 +15,15 @@ export async function main(denops: Denops): Promise<void> {
     }
   });
 
+  await denops.call("k8s#util#highlight#define");
+
   await autocmd.group(denops, "k8s_buffer", (helper) => {
+    helper.define(
+      "ColorScheme",
+      "*",
+      "call k8s#util#highlight#define()",
+    );
+
     helper.define(
       "BufReadCmd",
       "k8s://nodes/*/describe",
