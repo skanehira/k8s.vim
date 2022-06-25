@@ -33,8 +33,17 @@ export function renderDeploymentList(
 
 export async function actionGetList(
   denops: Denops,
-  namespace: string,
 ): Promise<void> {
+  const bufname = await denops.call("bufname") as string;
+  const result = bufname.match(/k8s:\/\/(.*)\/deployments/);
+  if (!result) {
+    throw new Error("invalid buffer name");
+  }
+  const namespace = result[1];
+  if (!namespace) {
+    throw new Error("invalid namespace");
+  }
+
   const deployments = await deployment.list(namespace);
   const rows = renderDeploymentList(deployments);
   await batch(denops, async (denops) => {
@@ -49,12 +58,20 @@ export async function actionGetList(
 
 export async function actionDescribe(
   denops: Denops,
-  name: string,
-  opts: {
-    namespace: string;
-  },
 ): Promise<void> {
-  const output = await deployment.describe(name, opts.namespace);
+  const bufname = await denops.call("bufname") as string;
+  const result = bufname.match(
+    /k8s:\/\/(.*)\/deployments\/(.*)\/describe/,
+  );
+  if (!result) {
+    throw new Error("invalid buffer name");
+  }
+  const [namespace, deploymentName] = result.slice(1);
+  if (!namespace || !deploymentName) {
+    throw new Error("invalid pod name");
+  }
+
+  const output = await deployment.describe(deploymentName, namespace);
   batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));

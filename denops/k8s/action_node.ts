@@ -37,8 +37,13 @@ export async function actionGetNodeList(denops: Denops): Promise<void> {
 
 export async function actionDescribeNode(
   denops: Denops,
-  name: string,
 ): Promise<void> {
+  const bufname = await denops.call("bufname") as string;
+  const result = bufname.match(/k8s:\/\/nodes\/(.*)\/describe/);
+  if (!result) {
+    throw new Error("invalid buffer name");
+  }
+  const name = result[1];
   const output = await node.describe(name);
   await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");

@@ -45,6 +45,6 @@ function! k8s#pod#delete() abort
   let pod = b:k8s_pods[line('.')-2]
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
-  cal denops#notify('k8s', 'podDelete', [name, namespace])
+  cal denops#notify('k8s', 'action', ["podDelete", name, namespace])
   e
 endfunction
