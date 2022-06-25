@@ -1,5 +1,6 @@
-import { renderPodList } from "./action_pod.ts";
+import { renderContainerList, renderPodList } from "./action_pod.ts";
 import { pods } from "./testdata/pods.ts";
+import { containers } from "./testdata/containers.ts";
 import { path } from "./deps.ts";
 import { assertEqualTextFile } from "./_util/assert.ts";
 
@@ -9,12 +10,22 @@ const testDir = path.join(
   "testdata",
 );
 
-Deno.test("test render post list", async () => {
+Deno.test("render post list", async () => {
   const actual = renderPodList(pods).join("\n");
   const expectFile = path.join(
     testDir,
     "want",
     "podlist.txt",
+  );
+  await assertEqualTextFile(actual, expectFile);
+});
+
+Deno.test("render container list", async () => {
+  const actual = renderContainerList(containers).join("\n");
+  const expectFile = path.join(
+    testDir,
+    "want",
+    "containerList.txt",
   );
   await assertEqualTextFile(actual, expectFile);
 });

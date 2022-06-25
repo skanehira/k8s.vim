@@ -147,30 +147,49 @@ export async function actionGetPodList(
   });
 }
 
+export function renderContainerStatus(
+  container: IoK8sApiCoreV1ContainerStatus,
+): [string, string] {
+  const state = container.state;
+  if (!state) {
+    return ["<unknown>", ""];
+  }
+
+  if (state.waiting && state.waiting.reason) {
+    return [state.waiting.reason, ""];
+  }
+  if (state.terminated && state.terminated.reason) {
+    const started = state.terminated.startedAt;
+    return [state.terminated.reason, started ? started.toLocaleString() : ""];
+  }
+  if (state.terminated && state.terminated.reason !== "") {
+    const started = state.terminated.startedAt;
+    const startTime = started ? started.toLocaleString() : "";
+    if (state.terminated.signal != 0) {
+      return [`Signal:${state.terminated.signal}`, startTime];
+    } else {
+      return [`ExitCode:${state.terminated.exitCode}`, startTime];
+    }
+  }
+  if (container.ready && state.running) {
+    const started = state.running.startedAt;
+    const startTime = started ? started.toLocaleString() : "";
+    return ["Running", startTime];
+  }
+  return ["<unknown>", ""];
+}
+
 export function renderContainerList(
   containers: IoK8sApiCoreV1ContainerStatus[],
 ): string[] {
   const header = ["NAME", "IMAGE", "READY", "STATE", "START TIME"];
   const body = containers.map((con) => {
-    let state = "<unknown>";
-    let startTime = "";
-    if (con.state?.running) {
-      state = "Running";
-      startTime = con.state.running.startedAt?.toLocaleString() ?? "<unknown>";
-    } else if (con.state?.waiting) {
-      state = "Waiting";
-      startTime = "";
-    } else if (con.state?.terminated) {
-      state = "Terminated";
-      startTime = con.state.terminated.startedAt?.toLocaleString() ??
-        "<unknown>";
-    }
-
+    const [status, startTime] = renderContainerStatus(con);
     const line = [
       con.name,
       con.image,
       con.ready.toString(),
-      state,
+      status,
       startTime,
     ];
     return line;
