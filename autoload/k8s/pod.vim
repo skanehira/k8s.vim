@@ -40,3 +40,11 @@ function! k8s#pod#yaml() abort
   let name = pod.metadata.name
   exe printf('drop k8s://%s/pods/%s/yaml', namespace, name)
 endfunction
+
+function! k8s#pod#delete() abort
+  let pod = b:k8s_pods[line('.')-2]
+  let namespace = pod.metadata.namespace
+  let name = pod.metadata.name
+  cal denops#notify('k8s', 'podDelete', [name, namespace])
+  e
+endfunction

@@ -129,5 +129,11 @@ export async function main(denops: Denops): Promise<void> {
       }
       await pod.actionGetResourceAsYaml(denops, podName, { namespace });
     },
+
+    async podDelete(name: unknown, namespace: unknown): Promise<void> {
+      await pod.actionDelete(name as string, {
+        namespace: namespace as string,
+      });
+    },
   };
 }

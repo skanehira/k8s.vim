@@ -1,4 +1,5 @@
 import {
+  deleteResource,
   describeResource,
   getResourceAsObject,
   getResourceAsText,
@@ -50,4 +51,11 @@ export async function describe(name: string, opts: {
 }): Promise<string> {
   const output = await describeResource("pods", name, opts);
   return output;
+}
+
+// NOTE: cannot use 'delete' for function name
+export async function remove(name: string, opts: {
+  namespace: string;
+}): Promise<void> {
+  await deleteResource("pod", name, opts);
 }

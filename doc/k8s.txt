@@ -127,6 +127,9 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:pods:yaml)*
   Open |k8s-buffer-pod-yaml|.
 
+*<Plug>(k8s:pods:delete)*
+  Delete pod.
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*
 

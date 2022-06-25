@@ -226,3 +226,9 @@ export async function actionGetResourceAsYaml(
     "setlocal nomodified nomodifiable buftype=nofile nowrap ft=yaml | nnoremap <buffer> q :bw!<CR>",
   );
 }
+
+export async function actionDelete(name: string, opts: {
+  namespace: string;
+}): Promise<void> {
+  await pod.remove(name, opts);
+}

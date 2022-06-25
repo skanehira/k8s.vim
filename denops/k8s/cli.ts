@@ -81,3 +81,18 @@ export async function describeResource(resource: string, name: string, opts?: {
   const output = await run(cmd);
   return output;
 }
+
+export async function deleteResource(resource: string, name: string, opts?: {
+  namespace?: string;
+}): Promise<void> {
+  const cmd = [
+    "kubectl",
+    "delete",
+    resource,
+    name,
+  ];
+  if (opts?.namespace) {
+    cmd.push("-n", opts.namespace);
+  }
+  await run(cmd);
+}
