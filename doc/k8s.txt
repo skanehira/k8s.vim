@@ -60,8 +60,11 @@ COMMANDS					*k8s-commands*
 :K8sPods					*:K8sPods*
   Open buffer of |k8s-pods|
 
-:K8sNodes					*K8sNodes*
+:K8sNodes					*:K8sNodes*
   Open buffer of |k8s-nodes|
+
+:K8sDeployments					*:K8sDeployments*
+  Open buffer of |k8s-buffer-deployments|
 
 ------------------------------------------------------------------------------
 BUFFER							*k8s-buffers*
@@ -85,6 +88,9 @@ k8s://nodes						*k8s-buffer-nodes*
 
 k8s://nodes/{node}/describe				*k8s-buffer-node-describe*
   Describe {node}.
+
+k8s://{namespace}/deployments				*k8s-buffer-deployments*
+  Show {namespace}'s deployments.
 
 ------------------------------------------------------------------------------
 KEY-MAPPINGS						*k8s-key-mappings*

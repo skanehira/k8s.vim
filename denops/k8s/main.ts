@@ -1,11 +1,13 @@
 import { autocmd, batch, Denops } from "./deps.ts";
 import * as pod from "./action_pod.ts";
 import * as node from "./action_node.ts";
+import * as deployment from "./action_deployment.ts";
 
 export async function main(denops: Denops): Promise<void> {
   const cmds = [
     "command! K8sPods :drop k8s://all/pods<CR>",
     "command! K8sNodes :drop k8s://nodes<CR>",
+    "command! K8sDeployments :drop k8s://all/deployments<CR>",
   ];
   await batch(denops, async (denops) => {
     for (const cmd of cmds) {
@@ -49,6 +51,12 @@ export async function main(denops: Denops): Promise<void> {
       "k8s://*/pods/*/yaml",
       `call denops#request("${denops.name}", "getPodAsYaml", []) | redraw!`,
     );
+
+    helper.define(
+      "BufReadCmd",
+      "k8s://*/deployments",
+      `call denops#request("${denops.name}", "deployments", []) | redraw!`,
+    );
   });
 
   denops.dispatcher = {
@@ -69,6 +77,21 @@ export async function main(denops: Denops): Promise<void> {
         return;
       }
       await pod.actionGetPodList(denops, namespace);
+    },
+
+    async deployments(): Promise<void> {
+      const bufname = await denops.call("bufname") as string;
+      const result = bufname.match(/k8s:\/\/(.*)\/deployments/);
+      if (!result) {
+        console.error("invalid buffer name");
+        return;
+      }
+      const namespace = result[1];
+      if (!namespace) {
+        console.error("invalid namespace");
+        return;
+      }
+      await deployment.actionGetList(denops, namespace);
     },
 
     async containers(): Promise<void> {
