@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         deno-version: [v1.x]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
     name: deno lint
     runs-on: ${{ matrix.os }}
     steps:
@@ -22,7 +22,7 @@ jobs:
         with:
           deno-version: ${{ matrix.deno-version }}
       - name: run lint
-        run: deno lint
+        run: deno lint --ignore=denops/k8s/models
   test:
     strategy:
       matrix:
