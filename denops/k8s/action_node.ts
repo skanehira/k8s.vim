@@ -1,4 +1,4 @@
-import { Denops, Table, vars } from "./deps.ts";
+import { batch, Denops, Table, vars } from "./deps.ts";
 import * as node from "./node.ts";
 import { IoK8sApiCoreV1Node } from "./models/IoK8sApiCoreV1Node.ts";
 
@@ -23,15 +23,16 @@ export function renderNodeList(
 
 export async function actionGetNodeList(denops: Denops): Promise<void> {
   const nodes = await node.list();
-  await vars.b.set(denops, "k8s_nodes", nodes);
-
   const rows = renderNodeList(nodes);
 
-  await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, rows);
-  await denops.cmd(
-    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-nodes",
-  );
+  await batch(denops, async (denops) => {
+    await vars.b.set(denops, "k8s_nodes", nodes);
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, rows);
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-nodes",
+    );
+  });
 }
 
 export async function actionDescribeNode(
@@ -39,9 +40,11 @@ export async function actionDescribeNode(
   name: string,
 ): Promise<void> {
   const output = await node.describe(name);
-  await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, output.split("\n"));
-  await denops.cmd(
-    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-node-describe",
-  );
+  await batch(denops, async (denops) => {
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, output.split("\n"));
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-node-describe",
+    );
+  });
 }

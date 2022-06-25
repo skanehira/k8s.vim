@@ -126,10 +126,10 @@ export async function actionGetPodList(
   const pods = await pod.list({
     namespace: namespace,
   });
-  await vars.b.set(denops, "k8s_pods", pods);
   const rows = renderPodList(pods);
 
   await batch(denops, async (denops) => {
+    await vars.b.set(denops, "k8s_pods", pods);
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, rows);
     await denops.cmd(
@@ -183,18 +183,20 @@ export async function actionGetPodContainers(
   const p = await pod.get(opts.name, {
     namespace: opts.namespace,
   });
-  await vars.b.set(denops, "k8s_pod", p);
   if (!p.status?.containerStatuses) {
     console.warn("no containers");
     return;
   }
 
   const rows = renderContainerList(p.status.containerStatuses);
-  await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, rows);
-  await denops.cmd(
-    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-containers",
-  );
+  await batch(denops, async (denops) => {
+    await vars.b.set(denops, "k8s_pod", p);
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, rows);
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-containers",
+    );
+  });
 }
 
 export async function actionDescribePod(
@@ -205,11 +207,13 @@ export async function actionDescribePod(
   },
 ): Promise<void> {
   const output = await pod.describe(name, opts);
-  await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, output.split("\n"));
-  await denops.cmd(
-    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-pod-describe",
-  );
+  await batch(denops, async (denops) => {
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, output.split("\n"));
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-pod-describe",
+    );
+  });
 }
 
 export async function actionGetResourceAsYaml(
@@ -220,11 +224,13 @@ export async function actionGetResourceAsYaml(
   },
 ): Promise<void> {
   const output = await pod.getAsYaml(name, opts);
-  await denops.cmd("setlocal modifiable");
-  await denops.call("setline", 1, output.split("\n"));
-  await denops.cmd(
-    "setlocal nomodified nomodifiable buftype=nofile nowrap ft=yaml | nnoremap <buffer> q :bw!<CR>",
-  );
+  await batch(denops, async (denops) => {
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, output.split("\n"));
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=yaml | nnoremap <buffer> q :bw!<CR>",
+    );
+  });
 }
 
 export async function actionDelete(name: string, opts: {
