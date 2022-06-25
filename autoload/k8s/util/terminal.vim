@@ -1,6 +1,5 @@
 if has('nvim')
   function! k8s#util#terminal#run(...) abort
-    new
     call termopen(a:000)
   endfunction
 else
