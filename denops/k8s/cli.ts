@@ -28,6 +28,7 @@ export interface ResourceOptions {
   all?: boolean;
   namespace?: string;
   node?: string;
+  fields?: string;
   format?: "json" | "yaml";
 }
 
@@ -40,14 +41,18 @@ export async function getResourceAsText(
     "get",
     resource,
   ];
-  if (opts.all) {
-    cmd.push("-A");
-  }
   if (opts.namespace) {
-    cmd.push("-n", opts.namespace);
+    if (opts.namespace === "all") {
+      cmd.push("-A");
+    } else {
+      cmd.push("-n", opts.namespace);
+    }
   }
   if (opts.format) {
     cmd.push("-o", opts.format);
+  }
+  if (opts.fields) {
+    cmd.push("--field-selector", opts.fields);
   }
   const output = await run(cmd);
   return output;

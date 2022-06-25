@@ -24,6 +24,10 @@ export const actions = new Map<
       pod.actionGetPodList,
     ],
     [
+      "podListWithField",
+      pod.actionGetPodListWithField,
+    ],
+    [
       "podDelete",
       pod.actionDelete,
     ],

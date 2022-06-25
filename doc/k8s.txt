@@ -72,7 +72,14 @@ BUFFER							*k8s-buffers*
 k8s://{namespace}/pods					*k8s-buffer-pods*
   Show {namespace}'s pods.
 
-  NOTE: if {namespace} is `all`, all pods will be displayed.
+  NOTE: If {namespace} is `all`, all pods will be displayed.
+
+k8s://{namespace}/pods?field=*				*k8s-buffer-pods-field*
+  Show {namespace}'s pods filterd by field selectors.
+
+  NOTE: 
+    Please see about field selectors.
+    https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/
 
 k8s://{namespace}/pods/{pod}/containers			*k8s-buffer-containers*
   Show {pod}'s containers.
@@ -126,6 +133,9 @@ You can define your own keymaps like bellow.
 							*k8s-nodes-key-mappings*
 *<Plug>(k8s:nodes:describe)*
   Describe node
+
+*<Plug>(k8s:nodes:pods)*
+  Show node's pods.
 
 							*k8s-containers-key-mappings*
 *<Plug>(k8s:pods:containers:shell)*

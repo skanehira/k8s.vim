@@ -7,19 +7,12 @@ import {
 } from "./cli.ts";
 import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
 
-export async function list(opts: {
-  namespace: string;
-}): Promise<IoK8sApiCoreV1Pod[]> {
-  const newOpts = {} as ResourceOptions;
-  if (opts.namespace === "all") {
-    newOpts.all = true;
-  } else {
-    newOpts.namespace = opts.namespace;
-  }
-
+export async function list(
+  opts: ResourceOptions,
+): Promise<IoK8sApiCoreV1Pod[]> {
   const pods = await getResourceAsObject<{ items: IoK8sApiCoreV1Pod[] }>(
     "pods",
-    newOpts,
+    opts,
   );
   return pods.items;
 }

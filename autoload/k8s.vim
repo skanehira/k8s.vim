@@ -9,6 +9,7 @@ let s:action_list = {
       \ 'pods:describe': function('k8s#pod#describe'),
       \ 'pods:yaml': function('k8s#pod#yaml'),
       \ 'pods:delete': function('k8s#pod#delete'),
+      \ 'nodes:pods': function('k8s#node#pods'),
       \ 'nodes:describe': function('k8s#node#describe'),
       \ 'deployments:describe': function('k8s#deployment#describe'),
       \ 'deployments:edit': function('k8s#deployment#edit'),

@@ -44,9 +44,9 @@ export async function main(denops: Denops): Promise<void> {
       },
       {
         event: "BufReadCmd",
-        pat: "k8s://*/pods/*/containers",
+        pat: `k8s://*/pods\?field=?*`,
         cmd:
-          `call denops#request("${denops.name}", "action", ["podContainerList"])`,
+          `call denops#request("${denops.name}", "action", ["podListWithField"])`,
       },
       {
         event: "BufReadCmd",

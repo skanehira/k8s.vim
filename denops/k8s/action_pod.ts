@@ -1,4 +1,5 @@
 import * as pod from "./pod.ts";
+import { ResourceOptions } from "./cli.ts";
 import { batch, Denops, Table, vars } from "./deps.ts";
 import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
 import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
@@ -119,6 +120,22 @@ export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
   return table.toString().split("\n");
 }
 
+export async function actionGetPodListWithField(denops: Denops): Promise<void> {
+  const bufname = await denops.call("bufname") as string;
+  const result = bufname.match(/k8s:\/\/(.*)\/pods\?field=(.*)/);
+  if (!result) {
+    throw new Error("invalid buffer name");
+  }
+  const [namespace, fields] = result.slice(1);
+  if (!namespace || !fields) {
+    throw new Error("invalid namespace or field");
+  }
+  await getList(denops, {
+    namespace: namespace,
+    fields: fields,
+  });
+}
+
 export async function actionGetPodList(
   denops: Denops,
 ): Promise<void> {
@@ -131,10 +148,14 @@ export async function actionGetPodList(
   if (!namespace) {
     throw new Error("invalid namespace");
   }
+  await getList(denops, { namespace });
+}
 
-  const pods = await pod.list({
-    namespace: namespace,
-  });
+export async function getList(
+  denops: Denops,
+  opts: ResourceOptions,
+): Promise<void> {
+  const pods = await pod.list(opts);
   const rows = renderPodList(pods);
 
   await batch(denops, async (denops) => {
