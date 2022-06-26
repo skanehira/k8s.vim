@@ -212,8 +212,7 @@ export async function containers(
   });
 
   if (!p.status?.containerStatuses) {
-    console.warn("no containers");
-    return;
+    throw new Error("no containers");
   }
 
   const rows = renderContainerList(p.status.containerStatuses);
