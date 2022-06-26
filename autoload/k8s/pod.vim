@@ -2,15 +2,19 @@
 " Author: skanehira
 " License: MIT
 
+function! s:get_pod() abort
+  return b:k8s_pods[line('.')-2]
+endfunction
+
 function! k8s#pod#containers() abort
-  let pod = b:k8s_pods[line('.')-2]
+  let pod = s:get_pod()
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
   exe printf('drop k8s://%s/pods/%s/containers', namespace, name)
 endfunction
 
 function! k8s#pod#logs() abort
-  let pod = b:k8s_pods[line('.')-2]
+  let pod = s:get_pod()
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
   call k8s#util#terminal#run('kubectl', 'logs', '-f', '-n', namespace, 'pods/' .. name)
@@ -28,21 +32,21 @@ function! k8s#pod#shell() abort
 endfunction
 
 function! k8s#pod#describe() abort
-  let pod = b:k8s_pods[line('.')-2]
+  let pod = s:get_pod()
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
   exe printf('drop k8s://%s/pods/%s/describe', namespace, name)
 endfunction
 
 function! k8s#pod#yaml() abort
-  let pod = b:k8s_pods[line('.')-2]
+  let pod = s:get_pod()
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
   exe printf('drop k8s://%s/pods/%s/yaml', namespace, name)
 endfunction
 
 function! k8s#pod#delete() abort
-  let pod = b:k8s_pods[line('.')-2]
+  let pod = s:get_pod()
   let resource = {
         \ 'type': 'pods',
         \ 'action': 'delete',
