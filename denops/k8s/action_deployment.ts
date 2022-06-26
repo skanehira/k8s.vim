@@ -1,6 +1,7 @@
 import { batch, Denops, Table, vars } from "./deps.ts";
 import { IoK8sApiAppsV1Deployment } from "./models/IoK8sApiAppsV1Deployment.ts";
 import * as deployment from "./deployment.ts";
+import { Resource } from "./action.ts";
 
 export function renderDeploymentList(
   deployments: IoK8sApiAppsV1Deployment[],
@@ -33,18 +34,13 @@ export function renderDeploymentList(
 
 export async function actionGetList(
   denops: Denops,
+  resource: Resource,
 ): Promise<void> {
-  const bufname = await denops.call("bufname") as string;
-  const result = bufname.match(/k8s:\/\/(.*)\/deployments/);
-  if (!result) {
-    throw new Error("invalid buffer name");
-  }
-  const namespace = result[1];
-  if (!namespace) {
+  if (!resource.namespace) {
     throw new Error("invalid namespace");
   }
 
-  const deployments = await deployment.list(namespace);
+  const deployments = await deployment.list(resource.namespace);
   const rows = renderDeploymentList(deployments);
   await batch(denops, async (denops) => {
     await vars.b.set(denops, "k8s_deployments", deployments);
@@ -58,20 +54,13 @@ export async function actionGetList(
 
 export async function actionDescribe(
   denops: Denops,
+  resource: Resource,
 ): Promise<void> {
-  const bufname = await denops.call("bufname") as string;
-  const result = bufname.match(
-    /k8s:\/\/(.*)\/deployments\/(.*)\/describe/,
-  );
-  if (!result) {
-    throw new Error("invalid buffer name");
-  }
-  const [namespace, deploymentName] = result.slice(1);
-  if (!namespace || !deploymentName) {
+  if (!resource.namespace || !resource.name) {
     throw new Error("invalid pod name");
   }
 
-  const output = await deployment.describe(deploymentName, namespace);
+  const output = await deployment.describe(resource.name, resource.namespace);
   batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));

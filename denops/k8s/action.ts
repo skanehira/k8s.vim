@@ -2,9 +2,9 @@ import { Denops } from "./deps.ts";
 import * as node from "./action_node.ts";
 import * as pod from "./action_pod.ts";
 import * as deployment from "./action_deployment.ts";
-//
-// deno-lint-ignore no-explicit-any
-type fn = (denops: Denops, ...params: any[]) => Promise<void>;
+import { Resource } from "./resource.ts";
+
+type fn = (denops: Denops, resource: Resource) => Promise<void>;
 
 export const actions = new Map<
   string,
@@ -12,43 +12,39 @@ export const actions = new Map<
 >(
   [
     [
-      "nodeDescribe",
+      "nodes:describe",
       node.actionDescribeNode,
     ],
     [
-      "nodeList",
+      "nodes:list",
       node.actionGetNodeList,
     ],
     [
-      "podList",
+      "pods:list",
       pod.actionGetPodList,
     ],
     [
-      "podListWithField",
-      pod.actionGetPodListWithField,
-    ],
-    [
-      "podDelete",
+      "pods:delete",
       pod.actionDelete,
     ],
     [
-      "podContainerList",
+      "pods:containers",
       pod.actionGetPodContainers,
     ],
     [
-      "podDescribe",
+      "pods:describe",
       pod.actionDescribePod,
     ],
     [
-      "podYaml",
+      "pods:yaml",
       pod.actionGetResourceAsYaml,
     ],
     [
-      "deploymentList",
+      "deployments:list",
       deployment.actionGetList,
     ],
     [
-      "deploymentDescribe",
+      "deployments:describe",
       deployment.actionDescribe,
     ],
   ],

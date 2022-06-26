@@ -1,5 +1,7 @@
 import { autocmd, batch, Denops } from "./deps.ts";
 import { actions } from "./action.ts";
+import { ensureResource } from "./_util/ensure.ts";
+import { loadBuffer } from "./resource.ts";
 
 export async function main(denops: Denops): Promise<void> {
   const cmds = [
@@ -28,76 +30,38 @@ export async function main(denops: Denops): Promise<void> {
       },
       {
         event: "BufReadCmd",
-        pat: "k8s://nodes",
-        cmd: `call denops#request("${denops.name}", "action", ["nodeList"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: "k8s://nodes/*/describe",
-        cmd:
-          `call denops#request("${denops.name}", "action", ["nodeDescribe"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: "k8s://*/pods",
-        cmd: `call denops#request("${denops.name}", "action", ["podList"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: `k8s://*/pods\?field=?*`,
-        cmd:
-          `call denops#request("${denops.name}", "action", ["podListWithField"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: "k8s://*/pods/*/containers",
-        cmd:
-          `call denops#request("${denops.name}", "action", ["podContainerList"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: "k8s://*/pods/*/describe",
-        cmd: `call denops#request("${denops.name}", "action", ["podDescribe"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: "k8s://*/pods/*/yaml",
-        cmd: `call denops#request("${denops.name}", "action", ["podYaml"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: "k8s://*/deployments",
-        cmd:
-          `call denops#request("${denops.name}", "action", ["deploymentList"])`,
-      },
-      {
-        event: "BufReadCmd",
-        pat: "k8s://*/deployments/*/describe",
-        cmd:
-          `call denops#request("${denops.name}", "action", ["deploymentDescribe"])`,
+        pat: "k8s://*",
+        cmd: `call denops#request("${denops.name}", "loadBuffer", [])`,
       },
     ];
-
     for (const cmd of autocmds) {
       helper.define(cmd.event, cmd.pat, cmd.cmd);
     }
   });
 
   denops.dispatcher = {
-    async action(...args: unknown[]): Promise<void> {
-      if (args.length === 0) {
-        console.error("require argument");
+    async loadBuffer(): Promise<void> {
+      const bufname = await denops.call("bufname") as string;
+      const resource = loadBuffer(bufname);
+      await denops.dispatch(denops.name, "action", resource);
+    },
+
+    async action(resource: unknown): Promise<void> {
+      if (!ensureResource(resource)) {
+        console.error(`${Deno.inspect(resource)} is not Resource`);
         return;
       }
-      const kind = args[0] as string;
+      const kind = `${resource.type}:${resource.action}`;
       const action = actions.get(kind);
-      if (action) {
-        try {
-          await action(denops, ...args.slice(1));
-          await denops.cmd("redraw!");
-        } catch (e) {
-          console.error(e.message);
-        }
+      if (!action) {
+        console.error(`${kind} is not found`);
+        return;
+      }
+      try {
+        await action(denops, resource);
+        await denops.cmd("redraw!");
+      } catch (e) {
+        console.error(e.message);
       }
     },
   };

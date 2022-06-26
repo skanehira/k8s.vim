@@ -1,9 +1,9 @@
 import * as pod from "./pod.ts";
-import { ResourceOptions } from "./cli.ts";
 import { batch, Denops, Table, vars } from "./deps.ts";
 import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
 import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
 import { IoK8sApiCoreV1PodCondition } from "./models/IoK8sApiCoreV1PodCondition.ts";
+import { Resource } from "./resource.ts";
 
 export function renderPodStatus(pod: IoK8sApiCoreV1Pod): string {
   let status = pod.status?.phase as string ?? "Unknown";
@@ -120,41 +120,14 @@ export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
   return table.toString().split("\n");
 }
 
-export async function actionGetPodListWithField(denops: Denops): Promise<void> {
-  const bufname = await denops.call("bufname") as string;
-  const result = bufname.match(/k8s:\/\/(.*)\/pods\?field=(.*)/);
-  if (!result) {
-    throw new Error("invalid buffer name");
-  }
-  const [namespace, fields] = result.slice(1);
-  if (!namespace || !fields) {
-    throw new Error("invalid namespace or field");
-  }
-  await getList(denops, {
-    namespace: namespace,
-    fields: fields,
-  });
-}
-
 export async function actionGetPodList(
   denops: Denops,
+  resource: Resource,
 ): Promise<void> {
-  const bufname = await denops.call("bufname") as string;
-  const result = bufname.match(/k8s:\/\/(.*)\/pods/);
-  if (!result) {
-    throw new Error("invalid buffer name");
+  if (!resource.namespace) {
+    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
   }
-  const namespace = result[1];
-  if (!namespace) {
-    throw new Error("invalid namespace");
-  }
-  await getList(denops, { namespace });
-}
-
-export async function getList(
-  denops: Denops,
-  opts: ResourceOptions,
-): Promise<void> {
+  const opts = { namespace: resource.namespace, fields: resource.fields };
   const pods = await pod.list(opts);
   const rows = renderPodList(pods);
 
@@ -224,19 +197,14 @@ export function renderContainerList(
 
 export async function actionGetPodContainers(
   denops: Denops,
+  resource: Resource,
 ): Promise<void> {
-  const bufname = await denops.call("bufname") as string;
-  const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/containers/);
-  if (!result) {
-    throw new Error("invalid buffer name");
-  }
-  const [namespace, podName] = result.slice(1);
-  if (!namespace || !podName) {
-    throw new Error("invalid pod name");
+  if (!resource.namespace || !resource.name) {
+    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
   }
 
-  const p = await pod.get(podName, {
-    namespace: namespace,
+  const p = await pod.get(resource.name, {
+    namespace: resource.namespace,
   });
 
   if (!p.status?.containerStatuses) {
@@ -257,18 +225,15 @@ export async function actionGetPodContainers(
 
 export async function actionDescribePod(
   denops: Denops,
+  resource: Resource,
 ): Promise<void> {
-  const bufname = await denops.call("bufname") as string;
-  const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/describe/);
-  if (!result) {
-    throw new Error("invalid buffer name");
-  }
-  const [namespace, podName] = result.slice(1);
-  if (!namespace || !podName) {
-    throw new Error("invalid pod name");
+  if (!resource.namespace || !resource.name) {
+    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
   }
 
-  const output = await pod.describe(podName, { namespace });
+  const output = await pod.describe(resource.name, {
+    namespace: resource.namespace,
+  });
   await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));
@@ -280,18 +245,15 @@ export async function actionDescribePod(
 
 export async function actionGetResourceAsYaml(
   denops: Denops,
+  resource: Resource,
 ): Promise<void> {
-  const bufname = await denops.call("bufname") as string;
-  const result = bufname.match(/k8s:\/\/(.*)\/pods\/(.*)\/yaml/);
-  if (!result) {
-    throw new Error("invalid buffer name");
-  }
-  const [namespace, podName] = result.slice(1);
-  if (!namespace || !podName) {
-    throw new Error("invalid pod name");
+  if (!resource.namespace || !resource.name) {
+    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
   }
 
-  const output = await pod.getAsYaml(podName, { namespace });
+  const output = await pod.getAsYaml(resource.name, {
+    namespace: resource.namespace,
+  });
   await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));
@@ -303,8 +265,11 @@ export async function actionGetResourceAsYaml(
 
 export async function actionDelete(
   _denops: Denops,
-  ...params: string[]
+  resource: Resource,
 ): Promise<void> {
-  const [name, namespace] = params;
-  await pod.remove(name, { namespace });
+  if (!resource.namespace || !resource.name) {
+    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
+  }
+
+  await pod.remove(resource.name, { namespace: resource.namespace });
 }
