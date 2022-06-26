@@ -11,7 +11,7 @@ Deno.test("load buffer", async (t) => {
       },
     },
     {
-      bufname: "ks8://nodes?field=metadata.name=sample",
+      bufname: "ks8://nodes?fields=metadata.name=sample",
       expect: {
         type: "nodes",
         action: "list",
@@ -36,7 +36,7 @@ Deno.test("load buffer", async (t) => {
     },
     {
       bufname:
-        "ks8://default/pods?field=metadata.name=hello,spec.nodeName=sample",
+        "ks8://default/pods?fields=metadata.name=hello,spec.nodeName=sample",
       expect: {
         type: "pods",
         action: "list",
