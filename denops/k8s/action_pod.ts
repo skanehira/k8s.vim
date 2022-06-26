@@ -120,7 +120,7 @@ export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
   return table.toString().split("\n");
 }
 
-export async function actionGetPodList(
+export async function list(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
@@ -199,7 +199,7 @@ export function renderContainerList(
   return table.toString().split("\n");
 }
 
-export async function actionGetPodContainers(
+export async function containers(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
@@ -227,7 +227,7 @@ export async function actionGetPodContainers(
   });
 }
 
-export async function actionDescribePod(
+export async function describe(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
@@ -247,7 +247,7 @@ export async function actionDescribePod(
   });
 }
 
-export async function actionGetResourceAsYaml(
+export async function yaml(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
@@ -267,7 +267,7 @@ export async function actionGetResourceAsYaml(
   });
 }
 
-export async function actionDelete(
+export async function remove(
   _denops: Denops,
   resource: Resource,
 ): Promise<void> {

@@ -13,39 +13,39 @@ export const actions = new Map<
   [
     [
       "nodes:describe",
-      node.actionDescribeNode,
+      node.describe,
     ],
     [
       "nodes:list",
-      node.actionGetNodeList,
+      node.list,
     ],
     [
       "pods:list",
-      pod.actionGetPodList,
+      pod.list,
     ],
     [
       "pods:delete",
-      pod.actionDelete,
+      pod.remove,
     ],
     [
       "pods:containers",
-      pod.actionGetPodContainers,
+      pod.containers,
     ],
     [
       "pods:describe",
-      pod.actionDescribePod,
+      pod.describe,
     ],
     [
       "pods:yaml",
-      pod.actionGetResourceAsYaml,
+      pod.yaml,
     ],
     [
       "deployments:list",
-      deployment.actionGetList,
+      deployment.list,
     ],
     [
       "deployments:describe",
-      deployment.actionDescribe,
+      deployment.describe,
     ],
   ],
 );

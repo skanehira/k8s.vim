@@ -1,7 +1,7 @@
 import { batch, Denops, Table, vars } from "./deps.ts";
 import { IoK8sApiAppsV1Deployment } from "./models/IoK8sApiAppsV1Deployment.ts";
 import * as deployment from "./deployment.ts";
-import { Resource } from "./action.ts";
+import { Resource } from "./resource.ts";
 
 export function renderDeploymentList(
   deployments: IoK8sApiAppsV1Deployment[],
@@ -32,7 +32,7 @@ export function renderDeploymentList(
   return table.toString().split("\n");
 }
 
-export async function actionGetList(
+export async function list(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
@@ -52,7 +52,7 @@ export async function actionGetList(
   });
 }
 
-export async function actionDescribe(
+export async function describe(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {

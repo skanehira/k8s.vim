@@ -111,7 +111,7 @@ export function renderNodeList(
   return table.toString().split("\n");
 }
 
-export async function actionGetNodeList(
+export async function list(
   denops: Denops,
   _resource: Resource,
 ): Promise<void> {
@@ -128,7 +128,7 @@ export async function actionGetNodeList(
   });
 }
 
-export async function actionDescribeNode(
+export async function describe(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
