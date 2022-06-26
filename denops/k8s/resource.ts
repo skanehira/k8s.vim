@@ -45,8 +45,10 @@ export function loadBuffer(bufname: string): Resource {
 
   if (url.search) {
     const params = new URLSearchParams(url.search);
-    resource.fields = params.get("fields") ?? "";
-    resource.labels = params.get("labels") ?? "";
+    const fields = params.get("fields");
+    if (fields) resource.fields = fields;
+    const labels = params.get("labels");
+    if (labels) resource.labels = labels;
   }
 
   return resource;

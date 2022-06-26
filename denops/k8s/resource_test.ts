@@ -11,6 +11,14 @@ Deno.test("load buffer", async (t) => {
       },
     },
     {
+      bufname: "ks8://nodes?labels=app=sample",
+      expect: {
+        type: "nodes",
+        action: "list",
+        labels: "app=sample",
+      },
+    },
+    {
       bufname: "ks8://nodes?fields=metadata.name=sample",
       expect: {
         type: "nodes",
