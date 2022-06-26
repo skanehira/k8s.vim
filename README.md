@@ -14,6 +14,9 @@ A Vim/Neovim plugin for kubernetes
 
 " Show all nodes
 :K8sNodes
+
+" Show all depployments
+:K8sDeployments
 ```
 
 Also you can do some action(like show pod's logs).
