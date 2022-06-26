@@ -11,12 +11,8 @@ export async function list(
 ): Promise<IoK8sApiAppsV1Deployment[]> {
   const opts: ResourceOptions = {
     format: "json",
+    namespace: namespace,
   };
-  if (namespace === "all") {
-    opts.all = true;
-  } else {
-    opts.namespace = namespace;
-  }
   const deployments = await getResourceAsObject<IoK8sApiAppsV1DeploymentList>(
     "deployment",
     opts,
