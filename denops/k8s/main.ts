@@ -30,7 +30,7 @@ export async function main(denops: Denops): Promise<void> {
       },
       {
         event: "BufReadCmd",
-        pat: "k8s://*",
+        pat: "k8s://?*",
         cmd: `call denops#request("${denops.name}", "loadBuffer", [])`,
       },
     ];
