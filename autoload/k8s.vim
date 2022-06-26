@@ -13,6 +13,7 @@ let s:action_list = {
       \ 'nodes:describe': function('k8s#node#describe'),
       \ 'deployments:describe': function('k8s#deployment#describe'),
       \ 'deployments:edit': function('k8s#deployment#edit'),
+      \ 'deployments:pods': function('k8s#deployment#pods'),
       \ }
 
 function! k8s#do_action(action) abort

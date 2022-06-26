@@ -5,6 +5,7 @@ export type Resource = {
   action: string;
   namespace?: string;
   fields?: string;
+  labels?: string;
   name?: string;
 };
 
@@ -21,10 +22,6 @@ export function loadBuffer(bufname: string): Resource {
     resource.type = "nodes";
     if (url.pathname === "") {
       resource.action = "list";
-      if (url.search) {
-        const params = new URLSearchParams(url.search);
-        resource.fields = params.get("field") ?? "";
-      }
     } else {
       const cols = url.pathname.split("/").slice(1);
       if (cols.length > 1) {
@@ -39,15 +36,17 @@ export function loadBuffer(bufname: string): Resource {
 
     if (cols.length === 1) {
       resource.action = "list";
-      if (url.search) {
-        const params = new URLSearchParams(url.search);
-        resource.fields = params.get("field") ?? "";
-      }
     }
     if (cols.length > 2) {
       resource.name = cols[1];
       resource.action = cols[2];
     }
+  }
+
+  if (url.search) {
+    const params = new URLSearchParams(url.search);
+    resource.fields = params.get("fields") ?? "";
+    resource.labels = params.get("labels") ?? "";
   }
 
   return resource;

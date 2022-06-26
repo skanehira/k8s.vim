@@ -74,12 +74,15 @@ k8s://{namespace}/pods					*k8s-buffer-pods*
 
   NOTE: If {namespace} is `all`, all pods will be displayed.
 
-k8s://{namespace}/pods?field=*				*k8s-buffer-pods-field*
+k8s://{namespace}/pods?fields=key=value			*k8s-buffer-pods-fields*
   Show {namespace}'s pods filterd by field selectors.
 
   NOTE: 
     Please see about field selectors.
     https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/
+
+k8s://{namespace}/pods?labels=key=value			*k8s-buffer-pods-labels*
+  Show {namespace}'s pods filterd by label.
 
 k8s://{namespace}/pods/{pod}/containers			*k8s-buffer-containers*
   Show {pod}'s containers.
@@ -130,9 +133,12 @@ You can define your own keymaps like bellow.
     If you want to edit in current vim instance,
     please use https://github.com/lambdalisue/guise.vim
 
+*<Plug>(k8s:deployments:pods)*
+  Show deployment's pods.
+
 							*k8s-nodes-key-mappings*
 *<Plug>(k8s:nodes:describe)*
-  Describe node
+  Describe node.
 
 *<Plug>(k8s:nodes:pods)*
   Show node's pods.

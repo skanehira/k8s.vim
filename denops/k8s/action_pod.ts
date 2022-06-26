@@ -127,7 +127,11 @@ export async function actionGetPodList(
   if (!resource.namespace) {
     throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
   }
-  const opts = { namespace: resource.namespace, fields: resource.fields };
+  const opts = {
+    namespace: resource.namespace,
+    fields: resource.fields,
+    labels: resource.labels,
+  };
   const pods = await pod.list(opts);
   const rows = renderPodList(pods);
 

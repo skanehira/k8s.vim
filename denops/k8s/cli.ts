@@ -29,6 +29,7 @@ export interface ResourceOptions {
   namespace?: string;
   node?: string;
   fields?: string;
+  labels?: string;
   format?: "json" | "yaml";
 }
 
@@ -53,6 +54,9 @@ export async function getResourceAsText(
   }
   if (opts.fields) {
     cmd.push("--field-selector", opts.fields);
+  }
+  if (opts.labels) {
+    cmd.push("-l", opts.labels);
   }
   const output = await run(cmd);
   return output;

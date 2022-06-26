@@ -20,3 +20,13 @@ function! k8s#deployment#edit() abort
   let namespace = dep.metadata.namespace
   call k8s#util#terminal#run('kubectl', 'edit', 'deployment', name, '-n', namespace)
 endfunction
+
+function k8s#deployment#pods() abort
+  let dep = s:get_deployment()
+  if !has_key(dep.spec.selector, 'matchLabels')
+    return
+  endif
+  let labels = join(map(keys(dep.spec.selector.matchLabels), 'v:val .. "=" .. dep.spec.selector.matchLabels[v:val]'), ",")
+  exe printf('drop k8s://all/pods?labels=%s', labels)
+endfunction
+

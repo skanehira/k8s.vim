@@ -9,3 +9,6 @@ nnoremap <buffer> <silent> <Plug>(k8s:deployments:describe)
 
 nnoremap <buffer> <silent> <Plug>(k8s:deployments:edit)
       \ <Cmd>call k8s#do_action('deployments:edit')<CR>
+
+nnoremap <buffer> <silent> <Plug>(k8s:deployments:pods)
+      \ <Cmd>call k8s#do_action('deployments:pods')<CR>
