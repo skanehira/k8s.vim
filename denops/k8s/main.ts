@@ -8,6 +8,7 @@ export async function main(denops: Denops): Promise<void> {
     "command! K8sPods :drop k8s://all/pods<CR>",
     "command! K8sNodes :drop k8s://nodes<CR>",
     "command! K8sDeployments :drop k8s://all/deployments<CR>",
+    "command! -nargs=+ K8s :call k8s#kubectl(<f-args>)",
   ];
   await batch(denops, async (denops) => {
     for (const cmd of cmds) {

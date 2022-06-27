@@ -56,7 +56,11 @@ VARIABLES					*k8s-variables*
 
 ------------------------------------------------------------------------------
 COMMANDS					*k8s-commands*
->
+
+:K8s {args}					*:K8s*
+  Execute kubectl via terminal.
+  For example, `:K8s get pods` is same as `kubectl get pods` 
+
 :K8sPods					*:K8sPods*
   Open buffer of |k8s-pods|
 

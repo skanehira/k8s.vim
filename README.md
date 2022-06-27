@@ -9,6 +9,10 @@ A Vim/Neovim plugin for kubernetes
 
 ## Usage
 ```vim
+" Execute kubectl via terminal
+" Bellow is Same as 'kubectl get pods -A'
+:K8s get pods -A
+
 " Show all pods
 :K8sPods
 

@@ -22,3 +22,8 @@ function! k8s#do_action(action) abort
   endif
   call call(s:action_list[a:action] , [])
 endfunction
+
+function! k8s#kubectl(...) abort
+  let cmd = ['kubectl'] + a:000
+  call call('k8s#util#terminal#run', cmd)
+endfunction
