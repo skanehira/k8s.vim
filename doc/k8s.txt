@@ -70,6 +70,9 @@ COMMANDS					*k8s-commands*
 :K8sDeployments					*:K8sDeployments*
   Open buffer of |k8s-buffer-deployments|
 
+:K8sServices					*:K8sServices*
+  Open buffer of |k8s-buffer-services|
+
 ------------------------------------------------------------------------------
 BUFFER							*k8s-buffers*
 
@@ -105,6 +108,9 @@ k8s://nodes/{node}/describe				*k8s-buffer-node-describe*
 
 k8s://{namespace}/deployments				*k8s-buffer-deployments*
   Show {namespace}'s deployments.
+
+k8s://{namespace}/services				*k8s-buffer-services*
+  Show {namespace}'s services.
 
 ------------------------------------------------------------------------------
 KEY-MAPPINGS						*k8s-key-mappings*
