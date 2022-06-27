@@ -5,7 +5,9 @@ import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerS
 import { IoK8sApiCoreV1PodCondition } from "./models/IoK8sApiCoreV1PodCondition.ts";
 import { Resource } from "./resource.ts";
 
-export function renderPodStatus(pod: IoK8sApiCoreV1Pod): string {
+export function renderPodStatusAndReady(
+  pod: IoK8sApiCoreV1Pod,
+): [string, string] {
   let status = pod.status?.phase as string ?? "Unknown";
   if (pod.status?.reason) {
     status = pod.status.reason;
@@ -44,6 +46,9 @@ export function renderPodStatus(pod: IoK8sApiCoreV1Pod): string {
     }
   }
 
+  const totalContainers = pod.spec?.containers?.length ?? 0;
+  let readyContainers = 0;
+
   if (!initializing && pod.status?.containerStatuses) {
     let hasRunning = false;
     const containers = pod.status.containerStatuses;
@@ -66,6 +71,7 @@ export function renderPodStatus(pod: IoK8sApiCoreV1Pod): string {
         }
       } else if (container.ready && state.running) {
         hasRunning = true;
+        readyContainers++;
       }
     }
 
@@ -86,7 +92,8 @@ export function renderPodStatus(pod: IoK8sApiCoreV1Pod): string {
     }
   }
 
-  return status;
+  const ready = `${readyContainers}/${totalContainers}`;
+  return [status, ready];
 }
 
 function hasPodReadyCondition(
@@ -103,16 +110,26 @@ function hasPodReadyCondition(
 export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
   const body = pods.map((pod) => {
     const podIPs = pod.status?.podIPs?.map((podip) => podip.ip ?? "");
+    const [status, ready] = renderPodStatusAndReady(pod);
     return [
       pod.metadata?.namespace ?? "<unknown>",
       pod.metadata?.name ?? "<unknown>",
-      renderPodStatus(pod),
+      ready,
+      status,
       podIPs?.join(" ") ?? "<unknown>",
       pod.spec?.nodeName ?? "<unknown>",
       pod.status?.startTime?.toLocaleString() ?? "<unknown>",
     ];
   });
-  const header = ["NAMESPACE", "NAME", "STATUS", "IP", "NODE", "START TIME"];
+  const header = [
+    "NAMESPACE",
+    "NAME",
+    "READY",
+    "STATUS",
+    "IP",
+    "NODE",
+    "START TIME",
+  ];
   const table = new Table();
   table.header(header)
     .body(body);
