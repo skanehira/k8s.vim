@@ -10,9 +10,9 @@ export function renderDeploymentList(
     return [
       dep.metadata?.namespace ?? "<unknown>",
       dep.metadata?.name ?? "<unknown>",
-      `${dep.status?.readyReplicas}/${dep.spec?.replicas}`,
-      dep.status?.updatedReplicas ?? "<unknown>",
-      dep.status?.availableReplicas ?? "<unknown>",
+      `${dep.status?.readyReplicas ?? 0}/${dep.spec?.replicas ?? 0}`,
+      dep.status?.updatedReplicas ?? "0",
+      dep.status?.availableReplicas ?? "0",
       dep.metadata?.creationTimestamp
         ? dep.metadata.creationTimestamp.toLocaleString()
         : "<unknown>",
