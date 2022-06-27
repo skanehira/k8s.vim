@@ -3,7 +3,7 @@
 " License: MIT
 
 function! k8s#util#highlight#define() abort
-  hi! K8sListHeader ctermfg=216 guifg=#e2a478 cterm=underline,bold
+  hi! K8sListHeader ctermfg=216 guifg=#e2a478 gui=underline,bold cterm=underline,bold
   hi! K8sContainersUp ctermfg=107 guifg=#a0c980
   hi! K8sDescribeKey ctermfg=216 guifg=#e2a478 cterm=bold
   hi! K8sPodsFailed cterm=bold ctermfg=203 gui=bold guifg=#ec7279
