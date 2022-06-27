@@ -157,7 +157,7 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:pods:containers:shell)*
   Run `/bin/sh` in container.
 
-							*k8s-opds-key-mappings*
+							*k8s-pods-key-mappings*
 *<Plug>(k8s:pods:containers)*
   Open |k8s-buffer-containers|.
 
@@ -172,6 +172,10 @@ You can define your own keymaps like bellow.
 
 *<Plug>(k8s:pods:delete)*
   Delete pod.
+
+							*k8s-services-key-mappings*
+*<Plug>(k8s:svcs:pods)*
+  Show service's pods.
 
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*
