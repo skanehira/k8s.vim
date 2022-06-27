@@ -177,6 +177,9 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:svcs:pods)*
   Show service's pods.
 
+*<Plug>(k8s:svcs:describe)*
+  Describe service.
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*
 
