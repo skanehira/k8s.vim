@@ -1,6 +1,7 @@
 import { getResourceAsObject, ResourceOptions } from "./cli.ts";
 import { IoK8sApiCoreV1Service } from "./models/IoK8sApiCoreV1Service.ts";
 import { IoK8sApiCoreV1ServiceList } from "./models/IoK8sApiCoreV1ServiceList.ts";
+import { describeResource } from "./cli.ts";
 
 export async function list(
   opts: ResourceOptions,
@@ -10,4 +11,11 @@ export async function list(
     opts,
   );
   return svcs.items;
+}
+
+export async function describe(name: string, opts: {
+  namespace: string;
+}): Promise<string> {
+  const output = await describeResource("svc", name, opts);
+  return output;
 }

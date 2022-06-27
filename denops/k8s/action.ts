@@ -52,5 +52,9 @@ export const actions = new Map<
       "services:list",
       svc.list,
     ],
+    [
+      "services:describe",
+      svc.describe,
+    ],
   ],
 );

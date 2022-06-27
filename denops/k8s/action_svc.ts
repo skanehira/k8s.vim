@@ -121,3 +121,26 @@ export async function list(denops: Denops, resource: Resource): Promise<void> {
     );
   });
 }
+
+export async function describe(
+  denops: Denops,
+  resource: Resource,
+): Promise<void> {
+  if (!resource.namespace || !resource.name) {
+    throw new Error(`invalid resource: ${JSON.stringify(resource)}`);
+  }
+
+  const opts = {
+    namespace: resource.namespace,
+  };
+
+  const output = await svc.describe(resource.name, opts);
+
+  await batch(denops, async (denops) => {
+    await denops.cmd("setlocal modifiable");
+    await denops.call("setline", 1, output.split("\n"));
+    await denops.cmd(
+      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-service-describe",
+    );
+  });
+}
