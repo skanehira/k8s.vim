@@ -1,4 +1,4 @@
-import { batch, Denops, Table, vars } from "./deps.ts";
+import { Denops, Table } from "./deps.ts";
 import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
 import { IoK8sApiCoreV1PodList } from "./models/IoK8sApiCoreV1PodList.ts";
 import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
@@ -10,6 +10,7 @@ import {
   getResourceAsObject,
   getResourceAsText,
 } from "./cli.ts";
+import { drawRows } from "./_util/drawer.ts";
 
 export function renderPodStatusAndReady(
   pod: IoK8sApiCoreV1Pod,
@@ -157,13 +158,8 @@ export async function list(
   const pods = result.items;
   const rows = renderPodList(pods);
 
-  await batch(denops, async (denops) => {
-    await vars.b.set(denops, "k8s_pods", pods);
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, rows);
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-pods",
-    );
+  await drawRows(denops, rows, "k8s-pods", {
+    data: { key: "k8s_pods", value: pods },
   });
 }
 
@@ -239,14 +235,14 @@ export async function containers(
   }
 
   const rows = renderContainerList(pod.status.containerStatuses);
-  await batch(denops, async (denops) => {
-    await vars.b.set(denops, "k8s_pod", pod);
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, rows);
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-containers",
-    );
-  });
+  await drawRows(
+    denops,
+    rows,
+    "k8s-containers",
+    {
+      data: { key: "k8s_pod", value: pod },
+    },
+  );
 }
 
 export async function describe(
@@ -263,14 +259,13 @@ export async function describe(
   const output = await describeResource("pods", resource.opts.name, {
     namespace,
   });
+  const rows = output.split("\n");
 
-  await batch(denops, async (denops) => {
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, output.split("\n"));
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-pod-describe",
-    );
-  });
+  await drawRows(
+    denops,
+    rows,
+    "k8s-pod-describe",
+  );
 }
 
 export async function yaml(
@@ -285,14 +280,8 @@ export async function yaml(
   resource.opts = { ...resource.opts, ...{ format: "yaml" } };
 
   const output = await getResourceAsText(resource);
-
-  await batch(denops, async (denops) => {
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, output.split("\n"));
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=yaml | nnoremap <buffer> q :bw!<CR>",
-    );
-  });
+  const rows = output.split("\n");
+  await drawRows(denops, rows, "yaml");
 }
 
 export async function remove(

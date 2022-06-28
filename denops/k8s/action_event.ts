@@ -1,7 +1,8 @@
-import { batch, Denops, Table } from "./deps.ts";
+import { Denops, Table } from "./deps.ts";
 import { IoK8sApiCoreV1Event } from "./models/IoK8sApiCoreV1Event.ts";
 import { Resource } from "./resource.ts";
 import { getEvents } from "./cli.ts";
+import { drawRows } from "./_util/drawer.ts";
 
 export function renderEvents(events: IoK8sApiCoreV1Event[]): string[] {
   const header = [
@@ -44,11 +45,5 @@ export async function list(
   const events = await getEvents(resource);
   const rows = renderEvents(events);
 
-  await batch(denops, async (denops) => {
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, rows);
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-events",
-    );
-  });
+  await drawRows(denops, rows, "k8s-events");
 }

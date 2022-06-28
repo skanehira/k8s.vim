@@ -1,9 +1,10 @@
-import { batch, Denops, Table, vars } from "./deps.ts";
+import { Denops, Table } from "./deps.ts";
 import { IoK8sApiCoreV1Node } from "./models/IoK8sApiCoreV1Node.ts";
 import { IoK8sApiCoreV1NodeList } from "./models/IoK8sApiCoreV1NodeList.ts";
 import { IoK8sApiCoreV1NodeCondition } from "./models/IoK8sApiCoreV1NodeCondition.ts";
 import { Resource } from "./resource.ts";
 import { describeResource, getResourceAsObject } from "./cli.ts";
+import { drawRows } from "./_util/drawer.ts";
 
 export function renderNodeStatus(node: IoK8sApiCoreV1Node): string {
   const status: string[] = [];
@@ -121,14 +122,8 @@ export async function list(
   const result = await getResourceAsObject<IoK8sApiCoreV1NodeList>(resource);
   const nodes = result.items;
   const rows = renderNodeList(nodes);
-
-  await batch(denops, async (denops) => {
-    await vars.b.set(denops, "k8s_nodes", nodes);
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, rows);
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-nodes",
-    );
+  await drawRows(denops, rows, "k8s-nodes", {
+    data: { key: "k8s_nodes", value: nodes },
   });
 }
 
@@ -142,11 +137,6 @@ export async function describe(
     );
   }
   const output = await describeResource("nodes", resource.opts.name);
-  await batch(denops, async (denops) => {
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, output.split("\n"));
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-node-describe",
-    );
-  });
+  const rows = output.split("\n");
+  await drawRows(denops, rows, "k8s-node-describe");
 }
