@@ -1,8 +1,9 @@
-import { batch, Denops, Table, vars } from "./deps.ts";
+import { Denops, Table } from "./deps.ts";
 import { Resource } from "./resource.ts";
 import { IoK8sApiAppsV1DeploymentList } from "./models/IoK8sApiAppsV1DeploymentList.ts";
 import { IoK8sApiAppsV1Deployment } from "./models/IoK8sApiAppsV1Deployment.ts";
 import { describeResource, getResourceAsObject } from "./cli.ts";
+import { drawRows } from "./_util/drawer.ts";
 
 export function renderDeploymentList(
   deployments: IoK8sApiAppsV1Deployment[],
@@ -45,13 +46,8 @@ export async function list(
   const deployments = result.items;
   const rows = renderDeploymentList(deployments);
 
-  await batch(denops, async (denops) => {
-    await vars.b.set(denops, "k8s_deployments", deployments);
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, rows);
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-deployments",
-    );
+  await drawRows(denops, rows, "k8s-deployments", {
+    data: { key: "k8s_deployments", value: deployments },
   });
 }
 
@@ -70,11 +66,6 @@ export async function describe(
     namespace,
   });
 
-  await batch(denops, async (denops) => {
-    await denops.cmd("setlocal modifiable");
-    await denops.call("setline", 1, output.split("\n"));
-    await denops.cmd(
-      "setlocal nomodified nomodifiable buftype=nofile nowrap ft=k8s-deployment-describe",
-    );
-  });
+  const rows = output.split("\n");
+  await drawRows(denops, rows, "k8s-deployment-describe");
 }
