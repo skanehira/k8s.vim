@@ -3,6 +3,7 @@ import * as node from "./action_node.ts";
 import * as pod from "./action_pod.ts";
 import * as deployment from "./action_deployment.ts";
 import * as svc from "./action_svc.ts";
+import * as event from "./action_event.ts";
 import { Resource } from "./resource.ts";
 
 type fn = (denops: Denops, resource: Resource) => Promise<void>;
@@ -55,6 +56,10 @@ export const actions = new Map<
     [
       "services:describe",
       svc.describe,
+    ],
+    [
+      "events:list",
+      event.list,
     ],
   ],
 );

@@ -58,3 +58,8 @@ function! k8s#pod#delete() abort
   cal denops#notify('k8s', 'action', [resource])
   e
 endfunction
+
+function! k8s#pod#events() abort
+  let pod = s:get_pod()
+  exe printf('drop k8s://events/list?namespace=%s&name=%s', pod.metadata.namespace, pod.metadata.name)
+endfunction

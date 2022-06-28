@@ -1,3 +1,5 @@
+import { IoK8sApiCoreV1Event } from "./models/IoK8sApiCoreV1Event.ts";
+import { IoK8sApiCoreV1EventList } from "./models/IoK8sApiCoreV1EventList.ts";
 import { Resource } from "./resource.ts";
 const dec = new TextDecoder();
 
@@ -99,4 +101,34 @@ export async function deleteResource(resource: string, name: string, opts?: {
     cmd.push("-n", opts.namespace);
   }
   await run(cmd);
+}
+
+export async function getEvents(
+  resource: Resource,
+): Promise<IoK8sApiCoreV1Event[]> {
+  const cmd = [
+    "kubectl",
+    "get",
+    "events",
+    "-A",
+  ];
+  if (resource.opts) {
+    const opts = resource.opts;
+    if (opts.namespace) {
+      cmd.push(
+        "--field-selector",
+        "involvedObject.namespace=" + opts.namespace,
+      );
+    }
+    if (opts.name) {
+      cmd.push("--field-selector", "involvedObject.name=" + opts.name);
+    }
+    if (opts.kind) {
+      cmd.push("--field-selector", "involvedObject.kind=" + opts.kind);
+    }
+  }
+  cmd.push("-o", "json");
+  const output = await run(cmd);
+  const result = JSON.parse(output) as IoK8sApiCoreV1EventList;
+  return result.items;
 }

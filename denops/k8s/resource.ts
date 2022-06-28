@@ -1,7 +1,18 @@
-const resourceTypes = ["deployments", "nodes", "pods", "services"] as const;
+const resourceTypes = [
+  "deployments",
+  "nodes",
+  "pods",
+  "services",
+  "events",
+] as const;
 export type ResourceType = typeof resourceTypes[number];
 
-const resourceActions = ["list", "describe", "containers", "yaml"] as const;
+const resourceActions = [
+  "list",
+  "describe",
+  "containers",
+  "yaml",
+] as const;
 export type ResourceAction = typeof resourceActions[number];
 
 export type ResourceOptions = {
@@ -10,6 +21,7 @@ export type ResourceOptions = {
   fields?: string;
   labels?: string;
   format?: string;
+  kind?: string;
 };
 
 export type Resource = {

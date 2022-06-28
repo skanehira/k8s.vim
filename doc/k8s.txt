@@ -77,6 +77,10 @@ COMMANDS					*k8s-commands*
   Open service list buffer.
   This is same as `:drop k8s://services/list?namespace=all`
 
+:K8sEvents					*:K8sEvents*
+  Open event list buffer.
+  This is same as `:drop k8s://events/list`
+
 ------------------------------------------------------------------------------
 BUFFER							*k8s-buffers*
 
@@ -137,6 +141,10 @@ k8s://deployments/list[?labels={value}&fields={value}&namespace={value}]
 k8s://deployments/describe?name={value}
   Show output of deployment describe.
   The name is deployment name and it's required.
+
+							*k8s-events*
+k8s://events/list[?name={value}&namespace={value}&kind={value}]
+  Show events.
 
 							*k8s-buffer-examples*
 
