@@ -5,10 +5,10 @@ import { loadBuffer } from "./resource.ts";
 
 export async function main(denops: Denops): Promise<void> {
   const cmds = [
-    "command! K8sPods :drop k8s://pods/list?namespace=all<CR>",
-    "command! K8sNodes :drop k8s://nodes/list?namespace=all<CR>",
-    "command! K8sDeployments :drop k8s://deployments/list?namespace=all<CR>",
-    "command! K8sServices :drop k8s://services/list?namespace=all<CR>",
+    "command! K8sPods :drop k8s://pods/list?namespace=all",
+    "command! K8sNodes :drop k8s://nodes/list?namespace=all",
+    "command! K8sDeployments :drop k8s://deployments/list?namespace=all",
+    "command! K8sServices :drop k8s://services/list?namespace=all",
     "command! K8sEvents :drop k8s://events/list",
     "command! -nargs=+ K8s :call k8s#kubectl(<f-args>)",
   ];
