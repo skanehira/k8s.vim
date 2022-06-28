@@ -11,7 +11,7 @@ function! k8s#deployment#describe() abort
   let dep = s:get_deployment()
   let name = dep.metadata.name
   let namespace = dep.metadata.namespace
-  exe printf('drop k8s://%s/deployments/%s/describe', namespace, name)
+  exe printf('drop k8s://deployments/describe?namespace=%s&name=%s', namespace, name)
 endfunction
 
 function! k8s#deployment#edit() abort
@@ -27,6 +27,5 @@ function k8s#deployment#pods() abort
     return
   endif
   let labels = join(map(keys(dep.spec.selector.matchLabels), 'v:val .. "=" .. dep.spec.selector.matchLabels[v:val]'), ",")
-  exe printf('drop k8s://all/pods?labels=%s', labels)
+  exe printf('drop k8s://pods/list?namespace=all&labels=%s', labels)
 endfunction
-

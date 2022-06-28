@@ -39,7 +39,7 @@ CHANGELOG			|k8s-changelog|
 ==============================================================================
 INTRODUCTION					*k8s-introduction*
 
-*k8s.vim* is a Vim/Neovim plugin for kubernets
+*k8s.vim* is a Vim/Neovim plugin for kubernetes
 
 Latest version:
 https://github.com/skanehira/k8s.vim
@@ -59,58 +59,102 @@ COMMANDS					*k8s-commands*
 
 :K8s {args}					*:K8s*
   Execute kubectl via terminal.
-  For example, `:K8s get pods` is same as `kubectl get pods` 
+  For example, `:K8s get pods` is same as `kubectl get pods`
 
 :K8sPods					*:K8sPods*
-  Open buffer of |k8s-pods|
+  Open pod list buffer.
+  This is same as `:drop k8s://pods/list?namespace=all`
 
 :K8sNodes					*:K8sNodes*
-  Open buffer of |k8s-nodes|
+  Open node list buffer.
+  This is same as `:drop k8s://nodes/list?namespace=all`
 
 :K8sDeployments					*:K8sDeployments*
-  Open buffer of |k8s-buffer-deployments|
+  Open deployment list buffer.
+  This is same as `drop k8s://deployments/list?namespace=all`
 
 :K8sServices					*:K8sServices*
-  Open buffer of |k8s-buffer-services|
+  Open service list buffer.
+  This is same as `:drop k8s://services/list?namespace=all`
 
 ------------------------------------------------------------------------------
 BUFFER							*k8s-buffers*
 
-k8s://{namespace}/pods					*k8s-buffer-pods*
-  Show {namespace}'s pods.
+k8s.vim providing buffer for show some resources.
+The buffer format is `k8s://{resource}/{action}[?{key=value}...]`
+The {params} is url params that like `key1=value1&key2=value2`
 
-  NOTE: If {namespace} is `all`, all pods will be displayed.
+							*k8s-pods*
+k8s://pods/list[?labels={value}&fields={value}&namespace={value}]
+  Show pod list.
+  You can use some parameters to filter pod.
+  `fields` is same as `--field-selector`, and `labels` is same as `-l`.
 
-k8s://{namespace}/pods?fields=key=value			*k8s-buffer-pods-fields*
-  Show {namespace}'s pods filterd by field selectors.
+							*k8s-pods-containers*
+k8s://pods/containers?name={value}[&namespace={value}]
+  Show pod's container list.
+  The `name` is pod name and it's required.
 
-  NOTE: 
-    Please see about field selectors.
-    https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/
+							*k8s-pods-describe*
+k8s://pods/describe?name={value}[&namespace={value}]
+  Show output of pod describe.
+  The name is pod name and it's required.
 
-k8s://{namespace}/pods?labels=key=value			*k8s-buffer-pods-labels*
-  Show {namespace}'s pods filterd by label.
+							*k8s-pods-yaml*
+k8s://pods/yaml?name={value}[&namespace={value}]
+  Show output of pod's definition.
+  The name is pod name and it's required.
 
-k8s://{namespace}/pods/{pod}/containers			*k8s-buffer-containers*
-  Show {pod}'s containers.
+							*k8s-nodes*
+k8s://nodes/list[?labels={value}&fields={value}]
+  Show node list.
+  You can use some parameters to filter node.
+  `fields` is same as `--field-selector`, and `labels` is same as `-l`.
 
-k8s://{namespace}/pods/{pod}/describe			*k8s-buffer-pod-describe*
-  Describe {pod}.
+							*k8s-nodes-describe*
+k8s://nodes/describe?name={value}
+  Show output of node describe.
+  The name is node name and it's required.
 
-k8s://{namespace}/pods/{pod}/yaml			*k8s-buffer-pod-yaml*
-  Show {pod}'s yaml.
+							*k8s-services*
+k8s://services/list[?labels={value}&fields={value}&namespace={value}]
+  Show service list.
+  You can use some parameters to filter node.
+  `fields` is same as `--field-selector`, and `labels` is same as `-l`.
 
-k8s://nodes						*k8s-buffer-nodes*
-  Show nodes.
+							*k8s-services-describe*
+k8s://services/describe?name={value}
+  Show output of service describe.
+  The name is service name and it's required.
 
-k8s://nodes/{node}/describe				*k8s-buffer-node-describe*
-  Describe {node}.
+							*k8s-deployments*
+k8s://deployments/list[?labels={value}&fields={value}&namespace={value}]
+  Show deployments list.
+  You can use some parameters to filter deployment.
+  `fields` is same as `--field-selector`, and `labels` is same as `-l`.
 
-k8s://{namespace}/deployments				*k8s-buffer-deployments*
-  Show {namespace}'s deployments.
+							*k8s-deployments-describe*
+k8s://deployments/describe?name={value}
+  Show output of deployment describe.
+  The name is deployment name and it's required.
 
-k8s://{namespace}/services				*k8s-buffer-services*
-  Show {namespace}'s services.
+							*k8s-buffer-examples*
+
+Bellow is some example of k8s buffer.
+>
+>
+  " same as `kubectl get pods -A`
+  k8s://pods/list?namespace=all
+
+  " same as `kubectl get pods -A --field-selector=spec.nodeName=worker1`
+  k8s://pods/list?namespace=all&fields=spec.nodeName=test-worker
+
+  " same as `kubectl get pods metrics-server -n kube-system`
+  k8s://pods/list?name=metrics-server&namespace=kube-system
+
+  " same as `kubectl describe svc sample`
+  k8s://services/describe?name=sample
+>
 
 ------------------------------------------------------------------------------
 KEY-MAPPINGS						*k8s-key-mappings*
@@ -159,16 +203,16 @@ You can define your own keymaps like bellow.
 
 							*k8s-pods-key-mappings*
 *<Plug>(k8s:pods:containers)*
-  Open |k8s-buffer-containers|.
+  Show pod's conatiners.
 
 *<Plug>(k8s:pods:logs)*
   Show pod's logs.
 
 *<Plug>(k8s:pods:describe)*
-  Open |k8s-buffer-pod-describe|.
+  Describe pod.
 
 *<Plug>(k8s:pods:yaml)*
-  Open |k8s-buffer-pod-yaml|.
+  Show pod yaml.
 
 *<Plug>(k8s:pods:delete)*
   Delete pod.

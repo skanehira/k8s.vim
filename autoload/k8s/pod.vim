@@ -10,7 +10,7 @@ function! k8s#pod#containers() abort
   let pod = s:get_pod()
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
-  exe printf('drop k8s://%s/pods/%s/containers', namespace, name)
+  exe printf('drop k8s://pods/containers?namespace=%s&name=%s', namespace, name)
 endfunction
 
 function! k8s#pod#logs() abort
@@ -35,14 +35,14 @@ function! k8s#pod#describe() abort
   let pod = s:get_pod()
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
-  exe printf('drop k8s://%s/pods/%s/describe', namespace, name)
+  exe printf('drop k8s://pods/describe?namespace=%s&name=%s', namespace, name)
 endfunction
 
 function! k8s#pod#yaml() abort
   let pod = s:get_pod()
   let namespace = pod.metadata.namespace
   let name = pod.metadata.name
-  exe printf('drop k8s://%s/pods/%s/yaml', namespace, name)
+  exe printf('drop k8s://pods/yaml?namespace=%s&name=%s', namespace, name)
 endfunction
 
 function! k8s#pod#delete() abort
@@ -50,8 +50,10 @@ function! k8s#pod#delete() abort
   let resource = {
         \ 'type': 'pods',
         \ 'action': 'delete',
-        \ 'name': pod.metadata.name,
-        \ 'namespace': pod.metadata.namespace,
+        \ 'opts': {
+            \ 'name': pod.metadata.name,
+            \ 'namespace': pod.metadata.namespace,
+          \ }
         \ }
   cal denops#notify('k8s', 'action', [resource])
   e

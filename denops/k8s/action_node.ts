@@ -1,8 +1,9 @@
 import { batch, Denops, Table, vars } from "./deps.ts";
-import * as node from "./node.ts";
 import { IoK8sApiCoreV1Node } from "./models/IoK8sApiCoreV1Node.ts";
+import { IoK8sApiCoreV1NodeList } from "./models/IoK8sApiCoreV1NodeList.ts";
 import { IoK8sApiCoreV1NodeCondition } from "./models/IoK8sApiCoreV1NodeCondition.ts";
 import { Resource } from "./resource.ts";
+import { describeResource, getResourceAsObject } from "./cli.ts";
 
 export function renderNodeStatus(node: IoK8sApiCoreV1Node): string {
   const status: string[] = [];
@@ -113,9 +114,12 @@ export function renderNodeList(
 
 export async function list(
   denops: Denops,
-  _resource: Resource,
+  resource: Resource,
 ): Promise<void> {
-  const nodes = await node.list();
+  // NOTE: list action only support json format, so we have to override format
+  resource.opts = { ...resource.opts, ...{ format: "json" } };
+  const result = await getResourceAsObject<IoK8sApiCoreV1NodeList>(resource);
+  const nodes = result.items;
   const rows = renderNodeList(nodes);
 
   await batch(denops, async (denops) => {
@@ -132,10 +136,12 @@ export async function describe(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.name) {
-    throw new Error(`invalid node name`);
+  if (!resource?.opts?.name) {
+    throw new Error(
+      `require resource name: ${JSON.stringify(resource)}`,
+    );
   }
-  const output = await node.describe(resource.name);
+  const output = await describeResource("nodes", resource.opts.name);
   await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));

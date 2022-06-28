@@ -12,12 +12,12 @@ function! k8s#svc#pods() abort
     return
   endif
   let labels = join(map(keys(svc.spec.selector), 'v:val .. "=" .. svc.spec.selector[v:val]'), ",")
-  exe printf('drop k8s://all/pods?labels=%s', labels)
+  exe printf('drop k8s://pods/list?namespace=all&labels=%s', labels)
 endfunction
 
 function! k8s#svc#describe() abort
   let svc = s:get_svc()
   let namespace = svc.metadata.namespace
   let name = svc.metadata.name
-  exe printf('drop k8s://%s/services/%s/describe', namespace, name)
+  exe printf('drop k8s://services/describe?namespace=%s&name=%s', namespace, name)
 endfunction

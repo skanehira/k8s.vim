@@ -1,54 +1,57 @@
-export type ResourceType = "deployments" | "nodes" | "pods" | "";
+const resourceTypes = ["deployments", "nodes", "pods", "services"] as const;
+export type ResourceType = typeof resourceTypes[number];
 
-export type Resource = {
-  type: ResourceType;
-  action: string;
+const resourceActions = ["list", "describe", "containers", "yaml"] as const;
+export type ResourceAction = typeof resourceActions[number];
+
+export type ResourceOptions = {
+  name?: string;
   namespace?: string;
   fields?: string;
   labels?: string;
-  name?: string;
+  format?: string;
 };
 
-export function loadBuffer(bufname: string): Resource {
-  const resource: Resource = {
-    type: "",
-    action: "",
-  };
+export type Resource = {
+  type: ResourceType;
+  action: ResourceAction;
+  opts?: ResourceOptions;
+};
 
+function isValidResourceType(
+  resourceType: string,
+): resourceType is ResourceType {
+  return resourceTypes.some((t) => t === resourceType);
+}
+
+function isValidResourceAction(
+  action: string,
+): action is ResourceAction {
+  return resourceActions.some((a) => a === action);
+}
+
+export function loadBuffer(bufname: string): Resource {
   const url = new URL(bufname);
 
-  // NOTE: node resource don't have namespace
-  if (url.hostname === "nodes") {
-    resource.type = "nodes";
-    if (url.pathname === "") {
-      resource.action = "list";
-    } else {
-      const cols = url.pathname.split("/").slice(1);
-      if (cols.length > 1) {
-        resource.name = cols[0];
-        resource.action = cols[1];
-      }
-    }
-  } else {
-    resource.namespace = url.hostname;
-    const cols = url.pathname.split("/").slice(1);
-    resource.type = cols[0] as ResourceType;
+  const resourceType = url.hostname;
+  const action = url.pathname.slice(1);
 
-    if (cols.length === 1) {
-      resource.action = "list";
-    }
-    if (cols.length > 2) {
-      resource.name = cols[1];
-      resource.action = cols[2];
-    }
+  if (!isValidResourceType(resourceType)) {
+    throw new Error(`invalid resource: ${resourceType}`);
   }
+  if (!isValidResourceAction(action)) {
+    throw new Error(`invalid action: ${action}`);
+  }
+
+  const resource: Resource = {
+    type: resourceType,
+    action: action,
+  };
 
   if (url.search) {
     const params = new URLSearchParams(url.search);
-    const fields = params.get("fields");
-    if (fields) resource.fields = fields;
-    const labels = params.get("labels");
-    if (labels) resource.labels = labels;
+    const opts: ResourceOptions = Object.fromEntries(params.entries());
+    resource.opts = opts;
   }
 
   return resource;

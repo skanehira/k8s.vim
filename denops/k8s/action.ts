@@ -29,16 +29,16 @@ export const actions = new Map<
       pod.remove,
     ],
     [
-      "pods:containers",
-      pod.containers,
-    ],
-    [
       "pods:describe",
       pod.describe,
     ],
     [
       "pods:yaml",
       pod.yaml,
+    ],
+    [
+      "pods:containers",
+      pod.containers,
     ],
     [
       "deployments:list",

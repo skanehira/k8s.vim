@@ -1,9 +1,15 @@
-import * as pod from "./pod.ts";
 import { batch, Denops, Table, vars } from "./deps.ts";
 import { IoK8sApiCoreV1Pod } from "./models/IoK8sApiCoreV1Pod.ts";
+import { IoK8sApiCoreV1PodList } from "./models/IoK8sApiCoreV1PodList.ts";
 import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
 import { IoK8sApiCoreV1PodCondition } from "./models/IoK8sApiCoreV1PodCondition.ts";
 import { Resource } from "./resource.ts";
+import {
+  deleteResource,
+  describeResource,
+  getResourceAsObject,
+  getResourceAsText,
+} from "./cli.ts";
 
 export function renderPodStatusAndReady(
   pod: IoK8sApiCoreV1Pod,
@@ -141,15 +147,14 @@ export async function list(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace) {
-    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
-  }
-  const opts = {
-    namespace: resource.namespace,
-    fields: resource.fields,
-    labels: resource.labels,
-  };
-  const pods = await pod.list(opts);
+  // NOTE: list action only support json format, so we have to override format
+  resource.opts = { ...resource.opts, ...{ format: "json" } };
+  delete resource.opts?.name;
+
+  const result = await getResourceAsObject<IoK8sApiCoreV1PodList>(
+    resource,
+  );
+  const pods = result.items;
   const rows = renderPodList(pods);
 
   await batch(denops, async (denops) => {
@@ -220,21 +225,22 @@ export async function containers(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace || !resource.name) {
-    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
+  if (!resource?.opts?.name || !resource?.opts?.namespace) {
+    throw new Error(
+      `require resource name and namespace: ${JSON.stringify(resource)}`,
+    );
   }
 
-  const p = await pod.get(resource.name, {
-    namespace: resource.namespace,
-  });
+  resource.opts = { ...resource.opts, ...{ format: "json" } };
+  const pod = await getResourceAsObject<IoK8sApiCoreV1Pod>(resource);
 
-  if (!p.status?.containerStatuses) {
+  if (!pod.status?.containerStatuses) {
     throw new Error("no containers");
   }
 
-  const rows = renderContainerList(p.status.containerStatuses);
+  const rows = renderContainerList(pod.status.containerStatuses);
   await batch(denops, async (denops) => {
-    await vars.b.set(denops, "k8s_pod", p);
+    await vars.b.set(denops, "k8s_pod", pod);
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, rows);
     await denops.cmd(
@@ -247,13 +253,17 @@ export async function describe(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace || !resource.name) {
-    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
+  if (!resource?.opts?.name) {
+    throw new Error(
+      `require resource name: ${JSON.stringify(resource)}`,
+    );
   }
 
-  const output = await pod.describe(resource.name, {
-    namespace: resource.namespace,
+  const namespace = resource.opts.namespace;
+  const output = await describeResource("pods", resource.opts.name, {
+    namespace,
   });
+
   await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));
@@ -267,13 +277,15 @@ export async function yaml(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace || !resource.name) {
-    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
+  if (!resource.opts?.namespace || !resource.opts?.name) {
+    throw new Error(
+      `require resource name and namespace: ${JSON.stringify(resource)}`,
+    );
   }
+  resource.opts = { ...resource.opts, ...{ format: "yaml" } };
 
-  const output = await pod.getAsYaml(resource.name, {
-    namespace: resource.namespace,
-  });
+  const output = await getResourceAsText(resource);
+
   await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));
@@ -287,9 +299,12 @@ export async function remove(
   _denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace || !resource.name) {
-    throw new Error(`invaild resource: ${JSON.stringify(resource)}`);
+  if (!resource.opts?.namespace || !resource.opts?.name) {
+    throw new Error(
+      `require resource name and namespace: ${JSON.stringify(resource)}`,
+    );
   }
 
-  await pod.remove(resource.name, { namespace: resource.namespace });
+  const namespace = resource.opts.namespace;
+  await deleteResource("pods", resource.opts.name, { namespace });
 }

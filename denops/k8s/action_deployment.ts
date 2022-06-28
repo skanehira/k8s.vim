@@ -1,7 +1,8 @@
 import { batch, Denops, Table, vars } from "./deps.ts";
-import { IoK8sApiAppsV1Deployment } from "./models/IoK8sApiAppsV1Deployment.ts";
-import * as deployment from "./deployment.ts";
 import { Resource } from "./resource.ts";
+import { IoK8sApiAppsV1DeploymentList } from "./models/IoK8sApiAppsV1DeploymentList.ts";
+import { IoK8sApiAppsV1Deployment } from "./models/IoK8sApiAppsV1Deployment.ts";
+import { describeResource, getResourceAsObject } from "./cli.ts";
 
 export function renderDeploymentList(
   deployments: IoK8sApiAppsV1Deployment[],
@@ -36,12 +37,14 @@ export async function list(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace) {
-    throw new Error("invalid namespace");
-  }
-
-  const deployments = await deployment.list(resource.namespace);
+  // NOTE: list action only support json format, so we have to override format
+  resource.opts = { ...resource.opts, ...{ format: "json" } };
+  const result = await getResourceAsObject<IoK8sApiAppsV1DeploymentList>(
+    resource,
+  );
+  const deployments = result.items;
   const rows = renderDeploymentList(deployments);
+
   await batch(denops, async (denops) => {
     await vars.b.set(denops, "k8s_deployments", deployments);
     await denops.cmd("setlocal modifiable");
@@ -56,12 +59,18 @@ export async function describe(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace || !resource.name) {
-    throw new Error("invalid pod name");
+  if (!resource?.opts?.name) {
+    throw new Error(
+      `require resource name: ${JSON.stringify(resource)}`,
+    );
   }
 
-  const output = await deployment.describe(resource.name, resource.namespace);
-  batch(denops, async (denops) => {
+  const namespace = resource.opts.namespace;
+  const output = await describeResource("pods", resource.opts.name, {
+    namespace,
+  });
+
+  await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");
     await denops.call("setline", 1, output.split("\n"));
     await denops.cmd(

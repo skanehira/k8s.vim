@@ -1,8 +1,9 @@
-import * as svc from "./svc.ts";
 import { batch, Denops, Table, vars } from "./deps.ts";
 import { Resource } from "./resource.ts";
 import { IoK8sApiCoreV1Service } from "./models/IoK8sApiCoreV1Service.ts";
+import { IoK8sApiCoreV1ServiceList } from "./models/IoK8sApiCoreV1ServiceList.ts";
 import { IoK8sApiCoreV1LoadBalancerStatus } from "./models/IoK8sApiCoreV1LoadBalancerStatus.ts";
+import { describeResource, getResourceAsObject } from "./cli.ts";
 
 function getLBIPs(lb: IoK8sApiCoreV1LoadBalancerStatus): string[] {
   if (!lb.ingress) return [];
@@ -99,17 +100,13 @@ export function renderSVCList(svcs: IoK8sApiCoreV1Service[]): string[] {
 }
 
 export async function list(denops: Denops, resource: Resource): Promise<void> {
-  if (!resource.namespace) {
-    throw new Error(`invalid resource: ${JSON.stringify(resource)}`);
-  }
+  // NOTE: list action only support json format, so we have to override format
+  resource.opts = { ...resource.opts, ...{ format: "json" } };
+  const result = await getResourceAsObject<IoK8sApiCoreV1ServiceList>(
+    resource,
+  );
 
-  const opts = {
-    namespace: resource.namespace,
-    fields: resource.fields,
-    labels: resource.labels,
-  };
-
-  const svcs = await svc.list(opts);
+  const svcs = result.items;
   const rows = renderSVCList(svcs);
 
   await batch(denops, async (denops) => {
@@ -126,15 +123,16 @@ export async function describe(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.namespace || !resource.name) {
-    throw new Error(`invalid resource: ${JSON.stringify(resource)}`);
+  if (!resource?.opts?.name) {
+    throw new Error(
+      `require resource name: ${JSON.stringify(resource)}`,
+    );
   }
 
-  const opts = {
-    namespace: resource.namespace,
-  };
-
-  const output = await svc.describe(resource.name, opts);
+  const namespace = resource.opts.namespace;
+  const output = await describeResource("svc", resource.opts.name, {
+    namespace,
+  });
 
   await batch(denops, async (denops) => {
     await denops.cmd("setlocal modifiable");

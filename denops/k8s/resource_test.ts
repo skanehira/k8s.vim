@@ -1,99 +1,99 @@
 import { loadBuffer, Resource } from "./resource.ts";
-import { assertEquals } from "./deps.ts";
+import { assertEquals, assertThrows } from "./deps.ts";
 
 Deno.test("load buffer", async (t) => {
   const tests: { bufname: string; expect: Resource }[] = [
     {
-      bufname: "ks8://nodes",
+      bufname: "ks8://nodes/list",
       expect: {
         type: "nodes",
         action: "list",
       },
     },
     {
-      bufname: "ks8://nodes?labels=app=sample",
+      bufname: "ks8://nodes/list?labels=app=sample&fields=metadata.name=sample",
       expect: {
         type: "nodes",
         action: "list",
-        labels: "app=sample",
+        opts: {
+          labels: "app=sample",
+          fields: "metadata.name=sample",
+        },
       },
     },
     {
-      bufname: "ks8://nodes?fields=metadata.name=sample",
+      bufname: "ks8://nodes/list?name=sample",
       expect: {
         type: "nodes",
         action: "list",
-        fields: "metadata.name=sample",
+        opts: {
+          name: "sample",
+        },
       },
     },
     {
-      bufname: "ks8://nodes/xxx/describe",
-      expect: {
-        type: "nodes",
-        action: "describe",
-        name: "xxx",
-      },
-    },
-    {
-      bufname: "ks8://all/pods",
+      bufname: "ks8://pods/describe?name=sample",
       expect: {
         type: "pods",
-        action: "list",
-        namespace: "all",
+        action: "describe",
+        opts: {
+          name: "sample",
+        },
+      },
+    },
+    {
+      bufname: "ks8://pods/containers?name=sample&namespace=test",
+      expect: {
+        type: "pods",
+        action: "containers",
+        opts: {
+          name: "sample",
+          namespace: "test",
+        },
+      },
+    },
+    {
+      bufname: "ks8://pods/yaml?name=sample&namespace=test",
+      expect: {
+        type: "pods",
+        action: "yaml",
+        opts: {
+          name: "sample",
+          namespace: "test",
+        },
       },
     },
     {
       bufname:
-        "ks8://default/pods?fields=metadata.name=hello,spec.nodeName=sample",
+        "ks8://services/list?fields=metadata.name=hello,spec.nodeName=sample",
       expect: {
-        type: "pods",
+        type: "services",
         action: "list",
-        namespace: "default",
-        fields: "metadata.name=hello,spec.nodeName=sample",
+        opts: {
+          fields: "metadata.name=hello,spec.nodeName=sample",
+        },
       },
     },
     {
-      bufname: "ks8://all/pods/xxx/containers",
-      expect: {
-        type: "pods",
-        action: "containers",
-        namespace: "all",
-        name: "xxx",
-      },
-    },
-    {
-      bufname: "ks8://all/pods/xxx/describe",
-      expect: {
-        type: "pods",
-        action: "describe",
-        namespace: "all",
-        name: "xxx",
-      },
-    },
-    {
-      bufname: "ks8://all/pods/xxx/yaml",
-      expect: {
-        type: "pods",
-        action: "yaml",
-        namespace: "all",
-        name: "xxx",
-      },
-    },
-    {
-      bufname: "ks8://all/deployments",
-      expect: {
-        type: "deployments",
-        action: "list",
-        namespace: "all",
-      },
-    },
-    {
-      bufname: "ks8://all/deployments/xxx/describe",
+      bufname: "ks8://deployments/describe?name=sample&format=yaml",
       expect: {
         type: "deployments",
         action: "describe",
-        namespace: "all",
-        name: "xxx",
+        opts: {
+          name: "sample",
+          format: "yaml",
+        },
+      },
+    },
+    {
+      bufname: "ks8://services/describe?format=json&labels=app=sample-app",
+      expect: {
+        type: "services",
+        action: "describe",
+        opts: {
+          labels: "app=sample-app",
+          format: "json",
+        },
       },
     },
   ];
@@ -102,6 +102,27 @@ Deno.test("load buffer", async (t) => {
     await t.step(`load ${test.bufname}`, () => {
       const actual = loadBuffer(test.bufname);
       assertEquals(actual, test.expect);
+    });
+  }
+});
+
+Deno.test("load invalid buffer", async (t) => {
+  const tests: { bufname: string; msg: string }[] = [
+    {
+      bufname: "k8s://a/list",
+      msg: "invalid resource: a",
+    },
+    {
+      bufname: "k8s://nodes/hoge",
+      msg: "invalid action: hoge",
+    },
+  ];
+
+  for (const test of tests) {
+    await t.step(`load ${test.bufname}`, () => {
+      assertThrows(() => {
+        loadBuffer(test.bufname);
+      }, test.msg);
     });
   }
 });

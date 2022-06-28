@@ -1,3 +1,4 @@
+import { Resource } from "./resource.ts";
 const dec = new TextDecoder();
 
 export async function run(cmd: string[]): Promise<string> {
@@ -15,7 +16,9 @@ export async function run(cmd: string[]): Promise<string> {
   if (!status.success) {
     const error = dec.decode(await p.stderrOutput());
     throw new Error(
-      `failed to execute command: ${cmd.join(" ")}, error: ${error}`,
+      `failed to execute command: '${
+        cmd.join(" ")
+      }', detail: '${error.trim()}'`,
     );
   }
 
@@ -24,50 +27,42 @@ export async function run(cmd: string[]): Promise<string> {
   return result;
 }
 
-export interface ResourceOptions {
-  all?: boolean;
-  namespace?: string;
-  node?: string;
-  fields?: string;
-  labels?: string;
-  format?: "json" | "yaml";
-}
-
 export async function getResourceAsText(
-  resource: string,
-  opts: ResourceOptions,
+  resource: Resource,
 ): Promise<string> {
   const cmd = [
     "kubectl",
     "get",
-    resource,
+    resource.type,
   ];
-  if (opts.namespace) {
-    if (opts.namespace === "all") {
+
+  if (resource.opts?.name) {
+    cmd.push(resource.opts.name);
+  }
+  if (resource.opts?.namespace) {
+    if (resource.opts.namespace === "all") {
       cmd.push("-A");
     } else {
-      cmd.push("-n", opts.namespace);
+      cmd.push("-n", resource.opts.namespace);
     }
   }
-  if (opts.format) {
-    cmd.push("-o", opts.format);
+  if (resource.opts?.format) {
+    cmd.push("-o", resource.opts.format);
   }
-  if (opts.fields) {
-    cmd.push("--field-selector", opts.fields);
+  if (resource.opts?.fields) {
+    cmd.push("--field-selector", resource.opts.fields);
   }
-  if (opts.labels) {
-    cmd.push("-l", opts.labels);
+  if (resource.opts?.labels) {
+    cmd.push("-l", resource.opts.labels);
   }
   const output = await run(cmd);
   return output;
 }
 
 export async function getResourceAsObject<T>(
-  resource: string,
-  opts: ResourceOptions,
+  resource: Resource,
 ): Promise<T> {
-  opts.format = "json";
-  const output = await getResourceAsText(resource, opts);
+  const output = await getResourceAsText(resource);
   return JSON.parse(output);
 }
 
