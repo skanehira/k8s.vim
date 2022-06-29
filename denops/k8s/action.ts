@@ -50,6 +50,10 @@ export const actions = new Map<
       deployment.describe,
     ],
     [
+      "deployments:delete",
+      deployment.remove,
+    ],
+    [
       "services:list",
       svc.list,
     ],

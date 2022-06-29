@@ -12,3 +12,6 @@ nnoremap <buffer> <silent> <Plug>(k8s:deployments:edit)
 
 nnoremap <buffer> <silent> <Plug>(k8s:deployments:pods)
       \ <Cmd>call k8s#do_action('deployments:pods')<CR>
+
+nnoremap <buffer> <silent> <Plug>(k8s:deployments:delete)
+      \ <Cmd>call k8s#do_action('deployments:delete')<CR>

@@ -29,3 +29,17 @@ function k8s#deployment#pods() abort
   let labels = join(map(keys(dep.spec.selector.matchLabels), 'v:val .. "=" .. dep.spec.selector.matchLabels[v:val]'), ",")
   exe printf('drop k8s://pods/list?namespace=all&labels=%s', labels)
 endfunction
+
+function! k8s#deployment#delete() abort
+  let dep = s:get_deployment()
+  let resource = {
+        \ 'type': 'deployments',
+        \ 'action': 'delete',
+        \ 'opts': {
+            \ 'name': dep.metadata.name,
+            \ 'namespace': dep.metadata.namespace,
+          \ }
+        \ }
+  cal denops#notify('k8s', 'action', [resource])
+  e
+endfunction
