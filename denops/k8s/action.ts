@@ -66,6 +66,10 @@ export const actions = new Map<
       svc.remove,
     ],
     [
+      "services:yaml",
+      svc.yaml,
+    ],
+    [
       "events:list",
       event.list,
     ],

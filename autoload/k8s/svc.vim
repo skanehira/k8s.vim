@@ -22,6 +22,13 @@ function! k8s#svc#describe() abort
   exe printf('drop k8s://services/describe?namespace=%s&name=%s', namespace, name)
 endfunction
 
+function! k8s#svc#yaml() abort
+  let svc = s:get_svc()
+  let namespace = svc.metadata.namespace
+  let name = svc.metadata.name
+  exe printf('drop k8s://services/yaml?namespace=%s&name=%s', namespace, name)
+endfunction
+
 function! k8s#svc#delete() abort
   let svc = s:get_svc()
   let resource = {

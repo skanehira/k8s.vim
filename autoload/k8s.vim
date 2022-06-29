@@ -19,6 +19,7 @@ let s:action_list = {
       \ 'services:pods': function('k8s#svc#pods'),
       \ 'services:describe': function('k8s#svc#describe'),
       \ 'services:delete': function('k8s#svc#delete'),
+      \ 'services:yaml': function('k8s#svc#yaml'),
       \ }
 
 function! k8s#do_action(action) abort

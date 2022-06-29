@@ -131,6 +131,11 @@ k8s://services/describe?name={value}
   Show output of service describe.
   The name is service name and it's required.
 
+							*k8s-services-yaml*
+k8s://services/yaml?name={value}[&namespace={value}]
+  Show output of service's definition.
+  The name is service name and it's required.
+
 							*k8s-deployments*
 k8s://deployments/list[?labels={value}&fields={value}&namespace={value}]
   Show deployments list.
