@@ -16,6 +16,9 @@ let s:action_list = {
       \ 'deployments:edit': function('k8s#deployment#edit'),
       \ 'deployments:pods': function('k8s#deployment#pods'),
       \ 'deployments:delete': function('k8s#deployment#delete'),
+      \ 'services:pods': function('k8s#svc#pods'),
+      \ 'services:describe': function('k8s#svc#describe'),
+      \ 'services:delete': function('k8s#svc#delete'),
       \ }
 
 function! k8s#do_action(action) abort
