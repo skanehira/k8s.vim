@@ -58,6 +58,10 @@ export const actions = new Map<
       svc.describe,
     ],
     [
+      "services:delete",
+      svc.remove,
+    ],
+    [
       "events:list",
       event.list,
     ],

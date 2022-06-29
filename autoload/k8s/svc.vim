@@ -21,3 +21,17 @@ function! k8s#svc#describe() abort
   let name = svc.metadata.name
   exe printf('drop k8s://services/describe?namespace=%s&name=%s', namespace, name)
 endfunction
+
+function! k8s#svc#deelte() abort
+  let svc = s:get_svc()
+  let resource = {
+        \ 'type': 'services',
+        \ 'action': 'delete',
+        \ 'opts': {
+            \ 'name': svc.metadata.name,
+            \ 'namespace': svc.metadata.namespace,
+          \ }
+        \ }
+  cal denops#notify('k8s', 'action', [resource])
+  e
+endfunction

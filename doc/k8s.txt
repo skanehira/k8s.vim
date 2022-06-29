@@ -232,6 +232,9 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:svcs:describe)*
   Describe service.
 
+*<Plug>(k8s:svcs:delete)*
+  Delete service.
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*
 
