@@ -60,7 +60,7 @@ function getPorts(svc: IoK8sApiCoreV1Service): string {
     return "<none>";
   }
   const ports = svc.spec.ports.map((port) => {
-    const p = [`${port.name}:${port.port}`];
+    const p = [port.name ? `${port.name}:${port.port}` : `${port.port}`];
     if (port.nodePort) p.push(`${port.protocol}/${port.nodePort}`);
     p.push(`${port.protocol}/${port.targetPort}`);
     return p.join("->");
