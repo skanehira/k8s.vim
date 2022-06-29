@@ -22,7 +22,7 @@ function! k8s#svc#describe() abort
   exe printf('drop k8s://services/describe?namespace=%s&name=%s', namespace, name)
 endfunction
 
-function! k8s#svc#deelte() abort
+function! k8s#svc#delete() abort
   let svc = s:get_svc()
   let resource = {
         \ 'type': 'services',
