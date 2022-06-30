@@ -21,3 +21,6 @@ nnoremap <buffer> <silent> <Plug>(k8s:pods:delete)
 
 nnoremap <buffer> <silent> <Plug>(k8s:pods:events)
       \ <Cmd>call k8s#do_action('pods:events')<CR>
+
+nnoremap <buffer> <silent> <Plug>(k8s:pods:shell)
+      \ <Cmd>call k8s#do_action('pods:shell')<CR>

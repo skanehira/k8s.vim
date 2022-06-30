@@ -196,7 +196,7 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:deployments:edit)*
   Edit deployment with $EDITOR in terminal.
 
-  NOTE: 
+  NOTE:
     If you want to edit in current vim instance,
     please use https://github.com/lambdalisue/guise.vim
 
@@ -217,6 +217,9 @@ You can define your own keymaps like bellow.
 							*k8s-pods-key-mappings*
 *<Plug>(k8s:pods:containers)*
   Show pod's conatiners.
+
+*<Plug>(k8s:pods:shell)*
+  Run `/bin/sh` in pod.
 
 *<Plug>(k8s:pods:logs)*
   Show pod's logs.
