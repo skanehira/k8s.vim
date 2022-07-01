@@ -14,6 +14,7 @@ endfunction
 " make resource for test
 call s:kubectl('apply', '-f', 'test/manifests/deployment.yaml')
 call s:kubectl('wait', 'pod', '-l', 'app=sample', '--for', 'condition=Ready')
+call s:kubectl('apply', 'get', 'pods')
 
 function s:suite.pod_list()
   e k8s://pods/list?labels=app=sample-app
