@@ -31,18 +31,18 @@ export function renderPodStatusAndReady(
           if (container.state.terminated.signal !== 0) {
             status = `Init:Signal:${container.state.terminated.signal}`;
           } else {
-            status = `Init:Signal:${container.state.terminated.exitCode}`;
+            status = `Init:ExitCode:${container.state.terminated.exitCode}`;
           }
         }
       } else if (container.state?.waiting) {
         initializing = true;
         const reason = container.state.waiting?.reason;
         if (reason && reason !== "PodInitializing") {
-          status = "Init:${reason}";
+          status = `Init:${reason}`;
         }
       } else {
         initializing = true;
-        status = `Init:${i}/${pod.spec?.initContainers?.length}`;
+        status = `Init:${i}/${pod.spec?.initContainers?.length ?? 0}`;
       }
       break;
     }
