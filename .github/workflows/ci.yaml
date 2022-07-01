@@ -5,9 +5,11 @@ on:
       - main
     paths-ignore:
       - 'README.md'
+      - 'doc/k8s.txt'
   pull_request:
     paths-ignore:
       - 'README.md'
+      - 'doc/k8s.txt'
 jobs:
   lint:
     strategy:
@@ -27,8 +29,6 @@ jobs:
     strategy:
       matrix:
         runner:
-          - windows-latest
-          - macos-latest
           - ubuntu-latest
         version:
           - "1.x"
@@ -37,8 +37,6 @@ jobs:
             nvim: "v0.6.0"
     runs-on: ${{ matrix.runner }}
     steps:
-      - run: git config --global core.autocrlf false
-        if: runner.os == 'Windows'
       - uses: actions/checkout@v2
       - uses: denoland/setup-deno@main
         with:
@@ -69,9 +67,16 @@ jobs:
         run: |
           git clone https://github.com/vim-denops/denops.vim $HOME/denops.vim
           echo "::set-output name=path::$HOME/denops.vim"
+      - name: Setup themis
+        id: themis
+        run: |
+          git clone https://github.com/thinca/vim-themis $HOME/vim-themis
+          echo "::set-output name=path::$HOME/vim-themis"
+          echo "$HOME/vim-themis/bin" >> $GITHUB_PATH
       - name: Test
         run: |
           make test
+          make test-e2e
         env:
           DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable_path }}
           DENOPS_TEST_NVIM: ${{ steps.nvim.outputs.executable_path }}
