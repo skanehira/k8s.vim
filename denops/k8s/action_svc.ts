@@ -155,19 +155,3 @@ export async function remove(
   const namespace = resource.opts.namespace;
   await deleteResource("svc", resource.opts.name, { namespace });
 }
-
-export async function yaml(
-  denops: Denops,
-  resource: Resource,
-): Promise<void> {
-  if (!resource.opts?.namespace || !resource.opts?.name) {
-    throw new Error(
-      `require resource name and namespace: ${JSON.stringify(resource)}`,
-    );
-  }
-  resource.opts = { ...resource.opts, ...{ format: "yaml" } };
-
-  const output = await getResourceAsText(resource);
-  const rows = output.split("\n");
-  await drawRows(denops, rows, "yaml");
-}

@@ -6,6 +6,8 @@ import * as svc from "./action_svc.ts";
 import * as event from "./action_event.ts";
 import * as secret from "./action_secret.ts";
 import { Resource } from "./resource.ts";
+import { getResourceAsText } from "./cli.ts";
+import { drawRows } from "./_util/drawer.ts";
 
 type fn = (denops: Denops, resource: Resource) => Promise<void>;
 
@@ -36,7 +38,7 @@ export const actions = new Map<
     ],
     [
       "pods:yaml",
-      pod.yaml,
+      yaml,
     ],
     [
       "pods:containers",
@@ -68,7 +70,7 @@ export const actions = new Map<
     ],
     [
       "services:yaml",
-      svc.yaml,
+      yaml,
     ],
     [
       "events:list",
@@ -84,7 +86,23 @@ export const actions = new Map<
     ],
     [
       "secrets:yaml",
-      secret.yaml,
+      yaml,
     ],
   ],
 );
+
+export async function yaml(
+  denops: Denops,
+  resource: Resource,
+): Promise<void> {
+  if (!resource.opts?.namespace || !resource.opts?.name) {
+    throw new Error(
+      `require resource name and namespace: ${JSON.stringify(resource)}`,
+    );
+  }
+  resource.opts = { ...resource.opts, ...{ format: "yaml" } };
+
+  const output = await getResourceAsText(resource);
+  const rows = output.split("\n");
+  await drawRows(denops, rows, "yaml");
+}
