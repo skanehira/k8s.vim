@@ -17,7 +17,7 @@ call s:kubectl('wait', 'pod', '-l', 'app=sample', '--for', 'condition=Ready')
 
 function s:suite.pod_list()
   e k8s://pods/list?labels=app=sample-app
-  sleep 1
+  sleep 3
   let contents = getline(1, '$')
   call s:expect(len(contents)).to_be_greater_than(1)
   bw
