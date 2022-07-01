@@ -15,7 +15,15 @@ export function renderEvents(events: IoK8sApiCoreV1Event[]): string[] {
     "MESSAGE",
     "COUNT",
   ];
-  const body = events.map((event) => {
+
+  const body = events.sort((a, b) => {
+    const atime = a.lastTimestamp ? new Date(a.lastTimestamp).getTime() : 0;
+    const btime = b.lastTimestamp ? new Date(b.lastTimestamp).getTime() : 0;
+    if (atime > btime) {
+      return 1;
+    }
+    return -1;
+  }).map((event) => {
     const source = event.source ? Object.values(event.source).join(", ") : "";
     const kind = event.involvedObject.kind?.toLowerCase() ?? "";
     const name = event.involvedObject?.name ?? "";
