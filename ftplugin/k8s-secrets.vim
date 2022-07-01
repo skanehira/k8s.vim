@@ -12,3 +12,6 @@ nnoremap <buffer> <silent> <Plug>(k8s:secrets:yaml)
 
 nnoremap <buffer> <silent> <Plug>(k8s:secrets:edit)
       \ <Cmd>call k8s#do_action('secrets:edit')<CR>
+
+nnoremap <buffer> <silent> <Plug>(k8s:secrets:delete)
+      \ <Cmd>call k8s#do_action('secrets:delete')<CR>

@@ -26,3 +26,17 @@ function! k8s#secret#edit() abort
   let namespace = secret.metadata.namespace
   call k8s#util#terminal#run('kubectl', 'edit', 'secrets', name, '-n', namespace)
 endfunction
+
+function! k8s#secret#delete() abort
+  let secret = s:get_secret()
+  let resource = {
+        \ 'type': 'secrets',
+        \ 'action': 'delete',
+        \ 'opts': {
+            \ 'name': secret.metadata.name,
+            \ 'namespace': secret.metadata.namespace,
+          \ }
+        \ }
+  cal denops#notify('k8s', 'action', [resource])
+  e
+endfunction

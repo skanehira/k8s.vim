@@ -96,6 +96,10 @@ export const actions = new Map<
       "secrets:yaml",
       yaml,
     ],
+    [
+      "secrets:delete",
+      remove,
+    ],
   ],
 );
 

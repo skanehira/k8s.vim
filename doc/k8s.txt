@@ -275,6 +275,9 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:secrets:yaml)*
   Show secret yaml.
 
+*<Plug>(k8s:secrets:delete)*
+  Delete secret.
+
 *<Plug>(k8s:secrets:edit)*
   Edit secret with $EDITOR in terminal.
 
