@@ -73,6 +73,12 @@ jobs:
           git clone https://github.com/thinca/vim-themis $HOME/vim-themis
           echo "::set-output name=path::$HOME/vim-themis"
           echo "$HOME/vim-themis/bin" >> $GITHUB_PATH
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        env:
+          DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable_path }}
+          DENOPS_TEST_NVIM: ${{ steps.nvim.outputs.executable_path }}
+          DENOPS_PATH: ${{ steps.denops.outputs.path }}
       - name: Test
         run: |
           make test
