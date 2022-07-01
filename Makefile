@@ -1,5 +1,4 @@
 PLUGIN_NAME=$$(basename `git rev-parse --show-toplevel` .vim)
-DENOPS_PATH=$$GHQ_ROOT/github.com/vim-denops/denops.vim
 
 .PHONY: init
 init:
@@ -12,12 +11,13 @@ coverage: test-local
 
 .PHONY: test-local
 test-local:
-	@DENOPS_PATH=$(DENOPS_PATH) DENOPS_TEST_NVIM=$$(which nvim) DENOPS_TEST_VIM=$$(which vim) TZ=UTC deno test -A --unstable
+	@DENOPS_PATH=$$GHQ_ROOT/github.com/vim-denops/denops.vim 
+	\ DENOPS_TEST_NVIM=$$(which nvim) DENOPS_TEST_VIM=$$(which vim) TZ=UTC deno test -A --unstable
 
 .PHONY: test-local-e2e
 test-local-e2e:
-	@THEMIS_VIM=$$(which vim) themis --runtimepath $(DENOPS_PATH)
-	@THEMIS_VIM=$$(which nvim) themis --runtimepath $(DENOPS_PATH)
+	@THEMIS_VIM=$$(which vim) themis --runtimepath $$GHQ_ROOT/github.com/vim-denops/denops.vim
+	@THEMIS_VIM=$$(which nvim) themis --runtimepath $$GHQ_ROOT/github.com/vim-denops/denops.vim
 
 .PHONY: test
 test:
