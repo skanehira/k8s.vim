@@ -53,6 +53,10 @@ export const actions = new Map<
       describe,
     ],
     [
+      "deployments:yaml",
+      yaml,
+    ],
+    [
       "deployments:delete",
       deployment.remove,
     ],

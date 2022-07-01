@@ -147,6 +147,11 @@ k8s://deployments/describe?name={value}
   Show output of deployment describe.
   The name is deployment name and it's required.
 
+							*k8s-deployments-yaml*
+k8s://deployments/yaml?name={value}
+  Show output of deployment's definition.
+  The name is deployment name and it's required.
+
 							*k8s-events*
 k8s://events/list[?name={value}&namespace={value}&kind={value}]
   Show events.
@@ -201,6 +206,9 @@ You can define your own keymaps like bellow.
 							*k8s-deployments-key-mappings*
 *<Plug>(k8s:deployments:describe)*
   Describe deployment.
+
+*<Plug>(k8s:deployments:yaml)*
+  Show deployment yaml.
 
 *<Plug>(k8s:deployments:edit)*
   Edit deployment with $EDITOR in terminal.

@@ -14,6 +14,13 @@ function! k8s#deployment#describe() abort
   exe printf('drop k8s://deployments/describe?namespace=%s&name=%s', namespace, name)
 endfunction
 
+function! k8s#deployment#yaml() abort
+  let dep = s:get_deployment()
+  let name = dep.metadata.name
+  let namespace = dep.metadata.namespace
+  exe printf('drop k8s://deployments/yaml?namespace=%s&name=%s', namespace, name)
+endfunction
+
 function! k8s#deployment#edit() abort
   let dep = s:get_deployment()
   let name = dep.metadata.name

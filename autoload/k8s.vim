@@ -14,6 +14,7 @@ let s:action_list = {
       \ 'nodes:pods': function('k8s#node#pods'),
       \ 'nodes:describe': function('k8s#node#describe'),
       \ 'deployments:describe': function('k8s#deployment#describe'),
+      \ 'deployments:yaml': function('k8s#deployment#yaml'),
       \ 'deployments:edit': function('k8s#deployment#edit'),
       \ 'deployments:pods': function('k8s#deployment#pods'),
       \ 'deployments:delete': function('k8s#deployment#delete'),
