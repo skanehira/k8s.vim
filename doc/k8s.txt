@@ -155,6 +155,11 @@ k8s://events/list[?name={value}&namespace={value}&kind={value}]
 k8s://secrets/list[?namespace={value}]
   Show secrets.
 
+							*k8s-secrets-describe*
+k8s://secrets/describe?name={value}[&namespace={value}]
+  Show output of secrets describe.
+  The name is node name and it's required.
+
 							*k8s-buffer-examples*
 
 Bellow is some example of k8s buffer.
@@ -246,6 +251,10 @@ You can define your own keymaps like bellow.
 
 *<Plug>(k8s:svcs:delete)*
   Delete service.
+
+							*k8s-secrets-key-mappings*
+*<Plug>(k8s:secrets:describe)*
+  Describe secret.
 
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*

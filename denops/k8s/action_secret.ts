@@ -1,6 +1,6 @@
 import { Denops, Table } from "./deps.ts";
 import { Resource } from "./resource.ts";
-import { getResourceAsObject } from "./cli.ts";
+import { describeResource, getResourceAsObject } from "./cli.ts";
 import { IoK8sApiCoreV1Secret } from "./models/IoK8sApiCoreV1Secret.ts";
 import { IoK8sApiCoreV1SecretList } from "./models/IoK8sApiCoreV1SecretList.ts";
 import { drawRows } from "./_util/drawer.ts";
@@ -44,4 +44,27 @@ export async function list(denops: Denops, resource: Resource): Promise<void> {
   await drawRows(denops, rows, "k8s-secrets", {
     data: { key: "k8s_secrets", value: secrets },
   });
+}
+
+export async function describe(
+  denops: Denops,
+  resource: Resource,
+): Promise<void> {
+  if (!resource?.opts?.name) {
+    throw new Error(
+      `require resource name: ${JSON.stringify(resource)}`,
+    );
+  }
+
+  const namespace = resource.opts.namespace;
+  const output = await describeResource("secrets", resource.opts.name, {
+    namespace,
+  });
+  const rows = output.split("\n");
+
+  await drawRows(
+    denops,
+    rows,
+    "k8s-secret-describe",
+  );
 }

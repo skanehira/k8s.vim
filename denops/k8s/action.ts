@@ -78,5 +78,9 @@ export const actions = new Map<
       "secrets:list",
       secret.list,
     ],
+    [
+      "secrets:describe",
+      secret.describe,
+    ],
   ],
 );
