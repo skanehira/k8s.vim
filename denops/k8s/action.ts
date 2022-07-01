@@ -6,7 +6,7 @@ import * as svc from "./action_svc.ts";
 import * as event from "./action_event.ts";
 import * as secret from "./action_secret.ts";
 import { Resource } from "./resource.ts";
-import { getResourceAsText } from "./cli.ts";
+import { describeResource, getResourceAsText } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 
 type fn = (denops: Denops, resource: Resource) => Promise<void>;
@@ -18,7 +18,7 @@ export const actions = new Map<
   [
     [
       "nodes:describe",
-      node.describe,
+      describe,
     ],
     [
       "nodes:list",
@@ -34,7 +34,7 @@ export const actions = new Map<
     ],
     [
       "pods:describe",
-      pod.describe,
+      describe,
     ],
     [
       "pods:yaml",
@@ -50,7 +50,7 @@ export const actions = new Map<
     ],
     [
       "deployments:describe",
-      deployment.describe,
+      describe,
     ],
     [
       "deployments:delete",
@@ -62,7 +62,7 @@ export const actions = new Map<
     ],
     [
       "services:describe",
-      svc.describe,
+      describe,
     ],
     [
       "services:delete",
@@ -82,7 +82,7 @@ export const actions = new Map<
     ],
     [
       "secrets:describe",
-      secret.describe,
+      describe,
     ],
     [
       "secrets:yaml",
@@ -105,4 +105,27 @@ export async function yaml(
   const output = await getResourceAsText(resource);
   const rows = output.split("\n");
   await drawRows(denops, rows, "yaml");
+}
+
+export async function describe(
+  denops: Denops,
+  resource: Resource,
+): Promise<void> {
+  if (!resource?.opts?.name) {
+    throw new Error(
+      `require resource name: ${JSON.stringify(resource)}`,
+    );
+  }
+
+  const namespace = resource.opts.namespace;
+  const output = await describeResource(resource.type, resource.opts.name, {
+    namespace,
+  });
+  const rows = output.split("\n");
+
+  await drawRows(
+    denops,
+    rows,
+    `k8s-${resource.type}-describe`,
+  );
 }

@@ -2,11 +2,7 @@ import { Denops, Table } from "./deps.ts";
 import { Resource } from "./resource.ts";
 import { IoK8sApiAppsV1DeploymentList } from "./models/IoK8sApiAppsV1DeploymentList.ts";
 import { IoK8sApiAppsV1Deployment } from "./models/IoK8sApiAppsV1Deployment.ts";
-import {
-  deleteResource,
-  describeResource,
-  getResourceAsObject,
-} from "./cli.ts";
+import { deleteResource, getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 
 export function renderDeploymentList(
@@ -53,25 +49,6 @@ export async function list(
   await drawRows(denops, rows, "k8s-deployments", {
     data: { key: "k8s_deployments", value: deployments },
   });
-}
-
-export async function describe(
-  denops: Denops,
-  resource: Resource,
-): Promise<void> {
-  if (!resource?.opts?.name) {
-    throw new Error(
-      `require resource name: ${JSON.stringify(resource)}`,
-    );
-  }
-
-  const namespace = resource.opts.namespace;
-  const output = await describeResource("pods", resource.opts.name, {
-    namespace,
-  });
-
-  const rows = output.split("\n");
-  await drawRows(denops, rows, "k8s-deployment-describe");
 }
 
 export async function remove(

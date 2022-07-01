@@ -3,12 +3,7 @@ import { Resource } from "./resource.ts";
 import { IoK8sApiCoreV1Service } from "./models/IoK8sApiCoreV1Service.ts";
 import { IoK8sApiCoreV1ServiceList } from "./models/IoK8sApiCoreV1ServiceList.ts";
 import { IoK8sApiCoreV1LoadBalancerStatus } from "./models/IoK8sApiCoreV1LoadBalancerStatus.ts";
-import {
-  deleteResource,
-  describeResource,
-  getResourceAsObject,
-  getResourceAsText,
-} from "./cli.ts";
+import { deleteResource, getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 
 function getLBIPs(lb: IoK8sApiCoreV1LoadBalancerStatus): string[] {
@@ -121,25 +116,6 @@ export async function list(denops: Denops, resource: Resource): Promise<void> {
   await drawRows(denops, rows, "k8s-services", {
     data: { key: "k8s_svcs", value: svcs },
   });
-}
-
-export async function describe(
-  denops: Denops,
-  resource: Resource,
-): Promise<void> {
-  if (!resource?.opts?.name) {
-    throw new Error(
-      `require resource name: ${JSON.stringify(resource)}`,
-    );
-  }
-
-  const namespace = resource.opts.namespace;
-  const output = await describeResource("svc", resource.opts.name, {
-    namespace,
-  });
-  const rows = output.split("\n");
-
-  await drawRows(denops, rows, "k8s-service-describe");
 }
 
 export async function remove(

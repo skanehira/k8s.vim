@@ -3,7 +3,7 @@ import { IoK8sApiCoreV1Node } from "./models/IoK8sApiCoreV1Node.ts";
 import { IoK8sApiCoreV1NodeList } from "./models/IoK8sApiCoreV1NodeList.ts";
 import { IoK8sApiCoreV1NodeCondition } from "./models/IoK8sApiCoreV1NodeCondition.ts";
 import { Resource } from "./resource.ts";
-import { describeResource, getResourceAsObject } from "./cli.ts";
+import { getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 
 export function renderNodeStatus(node: IoK8sApiCoreV1Node): string {
@@ -125,18 +125,4 @@ export async function list(
   await drawRows(denops, rows, "k8s-nodes", {
     data: { key: "k8s_nodes", value: nodes },
   });
-}
-
-export async function describe(
-  denops: Denops,
-  resource: Resource,
-): Promise<void> {
-  if (!resource?.opts?.name) {
-    throw new Error(
-      `require resource name: ${JSON.stringify(resource)}`,
-    );
-  }
-  const output = await describeResource("nodes", resource.opts.name);
-  const rows = output.split("\n");
-  await drawRows(denops, rows, "k8s-node-describe");
 }

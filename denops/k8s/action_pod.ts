@@ -4,12 +4,7 @@ import { IoK8sApiCoreV1PodList } from "./models/IoK8sApiCoreV1PodList.ts";
 import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
 import { IoK8sApiCoreV1PodCondition } from "./models/IoK8sApiCoreV1PodCondition.ts";
 import { Resource } from "./resource.ts";
-import {
-  deleteResource,
-  describeResource,
-  getResourceAsObject,
-  getResourceAsText,
-} from "./cli.ts";
+import { deleteResource, getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 
 export function renderPodStatusAndReady(
@@ -242,29 +237,6 @@ export async function containers(
     {
       data: { key: "k8s_pod", value: pod },
     },
-  );
-}
-
-export async function describe(
-  denops: Denops,
-  resource: Resource,
-): Promise<void> {
-  if (!resource?.opts?.name) {
-    throw new Error(
-      `require resource name: ${JSON.stringify(resource)}`,
-    );
-  }
-
-  const namespace = resource.opts.namespace;
-  const output = await describeResource("pods", resource.opts.name, {
-    namespace,
-  });
-  const rows = output.split("\n");
-
-  await drawRows(
-    denops,
-    rows,
-    "k8s-pod-describe",
   );
 }
 
