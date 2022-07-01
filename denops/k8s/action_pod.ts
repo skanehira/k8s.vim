@@ -239,17 +239,3 @@ export async function containers(
     },
   );
 }
-
-export async function remove(
-  _denops: Denops,
-  resource: Resource,
-): Promise<void> {
-  if (!resource.opts?.namespace || !resource.opts?.name) {
-    throw new Error(
-      `require resource name and namespace: ${JSON.stringify(resource)}`,
-    );
-  }
-
-  const namespace = resource.opts.namespace;
-  await deleteResource("pods", resource.opts.name, { namespace });
-}

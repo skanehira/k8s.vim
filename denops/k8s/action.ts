@@ -6,7 +6,7 @@ import * as svc from "./action_svc.ts";
 import * as event from "./action_event.ts";
 import * as secret from "./action_secret.ts";
 import { Resource } from "./resource.ts";
-import { describeResource, getResourceAsText } from "./cli.ts";
+import { deleteResource, describeResource, getResourceAsText } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 
 type fn = (denops: Denops, resource: Resource) => Promise<void>;
@@ -34,7 +34,7 @@ export const actions = new Map<
     ],
     [
       "pods:delete",
-      pod.remove,
+      remove,
     ],
     [
       "pods:describe",
@@ -62,7 +62,7 @@ export const actions = new Map<
     ],
     [
       "deployments:delete",
-      deployment.remove,
+      remove,
     ],
     [
       "services:list",
@@ -74,7 +74,7 @@ export const actions = new Map<
     ],
     [
       "services:delete",
-      svc.remove,
+      remove,
     ],
     [
       "services:yaml",
@@ -136,4 +136,18 @@ export async function describe(
     rows,
     `k8s-${resource.type}-describe`,
   );
+}
+
+export async function remove(
+  _denops: Denops,
+  resource: Resource,
+): Promise<void> {
+  if (!resource.opts?.namespace || !resource.opts?.name) {
+    throw new Error(
+      `require resource name and namespace: ${JSON.stringify(resource)}`,
+    );
+  }
+
+  const namespace = resource.opts.namespace;
+  await deleteResource(resource.type, resource.opts.name, { namespace });
 }
