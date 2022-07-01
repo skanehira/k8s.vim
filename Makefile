@@ -25,8 +25,8 @@ test:
 
 .PHONY: test-e2e
 test-e2e:
-	@THEMIS_VIM=$$DENOPS_TEST_VIM themis --runtimepath $$DENOPS_PATH
-	@THEMIS_VIM=$$DENOPS_TEST_NVIM themis --runtimepath $$DENOPS_PATH
+	@THEMIS_VIM=$$DENOPS_TEST_VIM themis --runtimepath $$DENOPS_PATH --runtimepath $$PWD
+	@THEMIS_VIM=$$DENOPS_TEST_NVIM themis --runtimepath $$DENOPS_PATH --runtimepath $$PWD
 
 .PHONY: deps
 deps:
