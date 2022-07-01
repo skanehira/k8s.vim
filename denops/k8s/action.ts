@@ -82,5 +82,9 @@ export const actions = new Map<
       "secrets:describe",
       secret.describe,
     ],
+    [
+      "secrets:yaml",
+      secret.yaml,
+    ],
   ],
 );

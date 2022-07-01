@@ -256,6 +256,9 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:secrets:describe)*
   Describe secret.
 
+*<Plug>(k8s:secrets:yaml)*
+  Show secret yaml.
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*
 

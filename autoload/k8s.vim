@@ -22,6 +22,7 @@ let s:action_list = {
       \ 'services:delete': function('k8s#svc#delete'),
       \ 'services:yaml': function('k8s#svc#yaml'),
       \ 'secrets:describe': function('k8s#secret#describe'),
+      \ 'secrets:yaml': function('k8s#secret#yaml'),
       \ }
 
 function! k8s#do_action(action) abort

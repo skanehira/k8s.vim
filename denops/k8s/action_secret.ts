@@ -1,6 +1,10 @@
 import { Denops, Table } from "./deps.ts";
 import { Resource } from "./resource.ts";
-import { describeResource, getResourceAsObject } from "./cli.ts";
+import {
+  describeResource,
+  getResourceAsObject,
+  getResourceAsText,
+} from "./cli.ts";
 import { IoK8sApiCoreV1Secret } from "./models/IoK8sApiCoreV1Secret.ts";
 import { IoK8sApiCoreV1SecretList } from "./models/IoK8sApiCoreV1SecretList.ts";
 import { drawRows } from "./_util/drawer.ts";
@@ -67,4 +71,20 @@ export async function describe(
     rows,
     "k8s-secret-describe",
   );
+}
+
+export async function yaml(
+  denops: Denops,
+  resource: Resource,
+): Promise<void> {
+  if (!resource.opts?.namespace || !resource.opts?.name) {
+    throw new Error(
+      `require resource name and namespace: ${JSON.stringify(resource)}`,
+    );
+  }
+  resource.opts = { ...resource.opts, ...{ format: "yaml" } };
+
+  const output = await getResourceAsText(resource);
+  const rows = output.split("\n");
+  await drawRows(denops, rows, "yaml");
 }
