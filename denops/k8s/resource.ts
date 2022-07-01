@@ -4,6 +4,7 @@ const resourceTypes = [
   "pods",
   "services",
   "events",
+  "secrets",
 ] as const;
 export type ResourceType = typeof resourceTypes[number];
 

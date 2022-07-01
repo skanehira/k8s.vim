@@ -151,6 +151,10 @@ k8s://deployments/describe?name={value}
 k8s://events/list[?name={value}&namespace={value}&kind={value}]
   Show events.
 
+							*k8s-secrets*
+k8s://secrets/list[?namespace={value}]
+  Show secrets.
+
 							*k8s-buffer-examples*
 
 Bellow is some example of k8s buffer.

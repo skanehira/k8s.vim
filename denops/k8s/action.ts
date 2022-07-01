@@ -4,6 +4,7 @@ import * as pod from "./action_pod.ts";
 import * as deployment from "./action_deployment.ts";
 import * as svc from "./action_svc.ts";
 import * as event from "./action_event.ts";
+import * as secret from "./action_secret.ts";
 import { Resource } from "./resource.ts";
 
 type fn = (denops: Denops, resource: Resource) => Promise<void>;
@@ -72,6 +73,10 @@ export const actions = new Map<
     [
       "events:list",
       event.list,
+    ],
+    [
+      "secrets:list",
+      secret.list,
     ],
   ],
 );
