@@ -21,6 +21,10 @@ export const actions = new Map<
       describe,
     ],
     [
+      "nodes:yaml",
+      yaml,
+    ],
+    [
       "nodes:list",
       node.list,
     ],
@@ -99,9 +103,9 @@ export async function yaml(
   denops: Denops,
   resource: Resource,
 ): Promise<void> {
-  if (!resource.opts?.namespace || !resource.opts?.name) {
+  if (!resource.opts?.name) {
     throw new Error(
-      `require resource name and namespace: ${JSON.stringify(resource)}`,
+      `require resource name: ${JSON.stringify(resource)}`,
     );
   }
   resource.opts = { ...resource.opts, ...{ format: "yaml" } };

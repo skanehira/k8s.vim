@@ -120,6 +120,11 @@ k8s://nodes/describe?name={value}
   Show output of node describe.
   The name is node name and it's required.
 
+							*k8s-nodes-yaml*
+k8s://nodes/yaml?name={value}
+  Show output of node' definition.
+  The name is node name and it's required.
+
 							*k8s-services*
 k8s://services/list[?labels={value}&fields={value}&namespace={value}]
   Show service list.
@@ -223,6 +228,9 @@ You can define your own keymaps like bellow.
 							*k8s-nodes-key-mappings*
 *<Plug>(k8s:nodes:describe)*
   Describe node.
+
+*<Plug>(k8s:nodes:yaml)*
+  Show node yaml.
 
 *<Plug>(k8s:nodes:pods)*
   Show node's pods.

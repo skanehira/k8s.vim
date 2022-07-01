@@ -13,6 +13,7 @@ let s:action_list = {
       \ 'pods:events': function('k8s#pod#events'),
       \ 'nodes:pods': function('k8s#node#pods'),
       \ 'nodes:describe': function('k8s#node#describe'),
+      \ 'nodes:yaml': function('k8s#node#yaml'),
       \ 'deployments:describe': function('k8s#deployment#describe'),
       \ 'deployments:yaml': function('k8s#deployment#yaml'),
       \ 'deployments:edit': function('k8s#deployment#edit'),
