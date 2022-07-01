@@ -4,7 +4,7 @@ import { IoK8sApiCoreV1PodList } from "./models/IoK8sApiCoreV1PodList.ts";
 import { IoK8sApiCoreV1ContainerStatus } from "./models/IoK8sApiCoreV1ContainerStatus.ts";
 import { IoK8sApiCoreV1PodCondition } from "./models/IoK8sApiCoreV1PodCondition.ts";
 import { Resource } from "./resource.ts";
-import { deleteResource, getResourceAsObject } from "./cli.ts";
+import { getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 
 export function renderPodStatusAndReady(
