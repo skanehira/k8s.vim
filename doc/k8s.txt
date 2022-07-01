@@ -275,6 +275,13 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:secrets:yaml)*
   Show secret yaml.
 
+*<Plug>(k8s:secrets:edit)*
+  Edit secret with $EDITOR in terminal.
+
+  NOTE:
+    If you want to edit in current vim instance,
+    please use https://github.com/lambdalisue/guise.vim
+
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*
 

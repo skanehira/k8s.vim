@@ -9,3 +9,6 @@ nnoremap <buffer> <silent> <Plug>(k8s:secrets:describe)
 
 nnoremap <buffer> <silent> <Plug>(k8s:secrets:yaml)
       \ <Cmd>call k8s#do_action('secrets:yaml')<CR>
+
+nnoremap <buffer> <silent> <Plug>(k8s:secrets:edit)
+      \ <Cmd>call k8s#do_action('secrets:edit')<CR>

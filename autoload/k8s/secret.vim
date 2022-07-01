@@ -19,3 +19,10 @@ function! k8s#secret#yaml() abort
   let name = secret.metadata.name
   exe printf('drop k8s://secrets/yaml?namespace=%s&name=%s', namespace, name)
 endfunction
+
+function! k8s#secret#edit() abort
+  let secret = s:get_secret()
+  let name = secret.metadata.name
+  let namespace = secret.metadata.namespace
+  call k8s#util#terminal#run('kubectl', 'edit', 'secrets', name, '-n', namespace)
+endfunction

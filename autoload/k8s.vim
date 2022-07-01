@@ -25,6 +25,7 @@ let s:action_list = {
       \ 'services:yaml': function('k8s#svc#yaml'),
       \ 'secrets:describe': function('k8s#secret#describe'),
       \ 'secrets:yaml': function('k8s#secret#yaml'),
+      \ 'secrets:edit': function('k8s#secret#edit'),
       \ }
 
 function! k8s#do_action(action) abort
