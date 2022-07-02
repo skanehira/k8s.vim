@@ -1,4 +1,4 @@
-import { autocmd, batch, Denops, vars } from "./deps.ts";
+import { autocmd, batch, Denops } from "./deps.ts";
 import { actions } from "./action.ts";
 import { ensureResource } from "./_util/ensure.ts";
 import { loadBuffer } from "./resource.ts";
@@ -73,5 +73,4 @@ export async function main(denops: Denops): Promise<void> {
       }
     },
   };
-  vars.g.set(denops, "loaded_k8s", 1);
 }

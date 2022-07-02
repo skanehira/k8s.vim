@@ -2,10 +2,11 @@ let s:suite = themis#suite('pod')
 let s:assert = themis#helper('assert')
 let s:expect = themis#helper('expect')
 
-" wait for denops starting
-while denops#server#status() !=# 'running'
-  sleep 1
-endwhile
+" wait for loading plugin
+let s:result = denops#plugin#wait('k8s', {'interval': 1})
+if s:result !=# 0
+  call s:assert.fail('k8s is not ready, result: ' .. s:result)
+endif
 
 function s:kubectl(...) abort
   call system(join(['kubectl'] + a:000))
@@ -15,13 +16,8 @@ endfunction
 call s:kubectl('apply', '-f', 'test/manifests/deployment.yaml')
 call s:kubectl('wait', 'pod', '-l', 'app=sample', '--for', 'condition=Ready')
 
-while !exists('g:loaded_k8s')
-  sleep 1
-endwhile
-
 function s:suite.pod_list()
   e k8s://pods/list?labels=app=sample-app
-  sleep 3
   let contents = getline(1, '$')
   call s:expect(len(contents)).to_be_greater_than(1)
   bw
