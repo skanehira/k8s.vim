@@ -15,6 +15,10 @@ endfunction
 call s:kubectl('apply', '-f', 'test/manifests/deployment.yaml')
 call s:kubectl('wait', 'pod', '-l', 'app=sample', '--for', 'condition=Ready')
 
+while !exists('g:loaded_k8s')
+  sleep 1
+endwhile
+
 function s:suite.pod_list()
   e k8s://pods/list?labels=app=sample-app
   sleep 3
@@ -72,6 +76,7 @@ function! s:suite.pod_logs()
   normal! j
   call k8s#do_action('pods:logs')
   call s:assert.not_equals(len(getline(1, '$')), 0)
+  call s:assert.equals(&buftype, 'terminal')
   bw!
 endfunction
 
