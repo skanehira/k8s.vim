@@ -32,6 +32,7 @@ function! s:suite.yaml()
   normal! j
   call k8s#do_action('pods:yaml')
   call s:assert.not_equals(len(getline(1, '$')), 0)
+  call s:assert.equals(&ft, 'yaml')
   bw!
 endfunction
 

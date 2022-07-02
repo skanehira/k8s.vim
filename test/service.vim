@@ -42,6 +42,15 @@ function s:suite.describe()
   bw
 endfunction
 
+function s:suite.yaml()
+  call s:openbuffer()
+  call k8s#do_action('services:yaml')
+  let contents = getline(1, '$')
+  call s:assert.not_equals(len(getline(1, '$')), 0)
+  call s:assert.equals(&ft, 'yaml')
+  bw
+endfunction
+
 function! s:suite.delete()
   call s:openbuffer()
   call k8s#do_action('services:delete')

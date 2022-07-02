@@ -1,4 +1,4 @@
-let s:suite = themis#suite('deployment')
+let s:suite = themis#suite('secret')
 let s:assert = themis#helper('assert')
 let s:expect = themis#helper('expect')
 
@@ -9,11 +9,10 @@ if s:result !=# 0
 endif
 
 " make resource for test
-call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/deployment.yaml')
-call k8s#util#cli#kubectl('wait', 'deployments/sample-deployment', '--for', 'condition=Available')
+call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/secret.yaml')
 
 function s:openbuffer()
-  e k8s://deployments/list?fields=metadata.name=sample-deployment
+  e k8s://secrets/list?fields=metadata.name=sample-secret
   normal! j
 endfunction
 
@@ -24,27 +23,18 @@ function s:suite.list()
   bw
 endfunction
 
-function s:suite.pods()
-  call s:openbuffer()
-  call k8s#do_action('deployments:pods')
-  let contents = getline(1, '$')
-  call s:expect(len(contents)).to_be_greater_than(1)
-  call s:assert.equals(&ft, 'k8s-pods')
-  bw
-endfunction
-
 function s:suite.describe()
   call s:openbuffer()
-  call k8s#do_action('deployments:describe')
+  call k8s#do_action('secrets:describe')
   let contents = getline(1, '$')
   call s:assert.not_equals(len(getline(1, '$')), 0)
-  call s:assert.equals(&ft, 'k8s-deployments-describe')
+  call s:assert.equals(&ft, 'k8s-secrets-describe')
   bw
 endfunction
 
 function s:suite.yaml()
   call s:openbuffer()
-  call k8s#do_action('deployments:yaml')
+  call k8s#do_action('secrets:yaml')
   let contents = getline(1, '$')
   call s:assert.not_equals(len(getline(1, '$')), 0)
   call s:assert.equals(&ft, 'yaml')
@@ -53,7 +43,7 @@ endfunction
 
 function s:suite.edit()
   call s:openbuffer()
-  call k8s#do_action('deployments:edit')
+  call k8s#do_action('secrets:edit')
   let contents = getline(1, '$')
   call s:assert.not_equals(len(getline(1, '$')), 0)
   call s:assert.equals(&buftype, 'terminal')
@@ -62,9 +52,8 @@ endfunction
 
 function! s:suite.delete()
   call s:openbuffer()
-  call k8s#do_action('deployments:delete')
-  call k8s#util#cli#kubectl('wait', 'deployments/sample-delpoyment', '--for', 'delete')
-  let result = k8s#util#cli#kubectl('get', 'deployments', '--field-selector=metadata.name=sample-deployment')
+  call k8s#do_action('secrets:delete')
+  let result = k8s#util#cli#kubectl('get', 'secrets', '--field-selector=metadata.name=sample-secrets')
   call s:assert.equals(result, 'No resources found in default namespace.')
   bw!
 endfunction
