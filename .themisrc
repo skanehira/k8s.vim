@@ -1,0 +1,42 @@
+let s:assert = themis#helper('assert')
+let s:expect = themis#helper('expect')
+
+function s:job_status(bufnr, value)
+  if has('nvim')
+    let winlist = win_findbuf(a:bufnr)
+    if len(winlist) ==# 0
+      return 0
+    endif
+    let oldwin = win_getid()
+    call win_gotoid(winlist[0])
+    let status = jobwait([b:terminal_job_id], 0)[0] == -1 ? 'running' : 'finished'
+    call win_gotoid(oldwin)
+    return status ==# a:value
+  endif
+
+  let status = term_getstatus(a:bufnr)
+  if status !=# 'finished'
+    let status = split(status, ',')[0]
+  endif
+  return status ==# a:value
+endfunction
+
+call themis#helper#expect#define_matcher('job_status_to_be',
+      \ function('s:job_status'))
+
+function ListBufferNotEmpty(bufnr)
+  let contents = getbufline(a:bufnr, 1, '$')
+  call s:expect(len(contents)).to_be_greater_than(1)
+endfunction
+
+function BufferNotEmpty(bufnr)
+  let contents = getline(1, '$')
+  call s:assert.not_equals(len(getline(1, '$')), 0)
+endfunction
+
+function WaitDenopsLoading()
+  let s:result = denops#plugin#wait('k8s', {'interval': 1})
+  if s:result !=# 0
+    call s:assert.fail('k8s is not ready, result: ' .. s:result)
+  endif
+endfunction

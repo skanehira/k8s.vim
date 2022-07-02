@@ -2,69 +2,53 @@ let s:suite = themis#suite('deployment')
 let s:assert = themis#helper('assert')
 let s:expect = themis#helper('expect')
 
-" wait for loading plugin
-let s:result = denops#plugin#wait('k8s', {'interval': 1})
-if s:result !=# 0
-  call s:assert.fail('k8s is not ready, result: ' .. s:result)
-endif
+call WaitDenopsLoading()
 
 " make resource for test
 call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/deployment.yaml')
 call k8s#util#cli#kubectl('wait', 'deployments/sample-deployment', '--for', 'condition=Available')
 
-function s:openbuffer()
+function s:suite.before_each()
   e k8s://deployments/list?fields=metadata.name=sample-deployment
   normal! j
 endfunction
 
-function s:suite.list()
-  call s:openbuffer()
-  let contents = getline(1, '$')
-  call s:expect(len(contents)).to_be_greater_than(1)
-  bw
-endfunction
-
-function s:suite.pods()
-  call s:openbuffer()
-  call k8s#do_action('deployments:pods')
-  let contents = getline(1, '$')
-  call s:expect(len(contents)).to_be_greater_than(1)
-  call s:assert.equals(&ft, 'k8s-pods')
-  bw
-endfunction
-
-function s:suite.describe()
-  call s:openbuffer()
-  call k8s#do_action('deployments:describe')
-  let contents = getline(1, '$')
-  call s:assert.not_equals(len(getline(1, '$')), 0)
-  call s:assert.equals(&ft, 'k8s-deployments-describe')
-  bw
-endfunction
-
-function s:suite.yaml()
-  call s:openbuffer()
-  call k8s#do_action('deployments:yaml')
-  let contents = getline(1, '$')
-  call s:assert.not_equals(len(getline(1, '$')), 0)
-  call s:assert.equals(&ft, 'yaml')
-  bw
-endfunction
-
-function s:suite.edit()
-  call s:openbuffer()
-  call k8s#do_action('deployments:edit')
-  let contents = getline(1, '$')
-  call s:assert.not_equals(len(getline(1, '$')), 0)
-  call s:assert.equals(&buftype, 'terminal')
+function s:suite.after_each()
   bw!
 endfunction
 
+function s:suite.list()
+  call ListBufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'k8s-deployments')
+endfunction
+
+function s:suite.pods()
+  call k8s#do_action('deployments:pods')
+  call BufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'k8s-pods')
+endfunction
+
+function s:suite.describe()
+  call k8s#do_action('deployments:describe')
+  call BufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'k8s-deployments-describe')
+endfunction
+
+function s:suite.yaml()
+  call k8s#do_action('deployments:yaml')
+  call BufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'yaml')
+endfunction
+
+function s:suite.edit()
+  call k8s#do_action('deployments:edit')
+  call BufferNotEmpty(bufnr())
+  call s:expect(bufnr()).job_status_to_be('running')
+endfunction
+
 function! s:suite.delete()
-  call s:openbuffer()
   call k8s#do_action('deployments:delete')
   call k8s#util#cli#kubectl('wait', 'deployments/sample-delpoyment', '--for', 'delete')
   let result = k8s#util#cli#kubectl('get', 'deployments', '--field-selector=metadata.name=sample-deployment')
   call s:assert.equals(result, 'No resources found in default namespace.')
-  bw!
 endfunction

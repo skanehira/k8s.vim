@@ -2,39 +2,36 @@ let s:suite = themis#suite('node')
 let s:assert = themis#helper('assert')
 let s:expect = themis#helper('expect')
 
-" wait for loading plugin
-let s:result = denops#plugin#wait('k8s', {'interval': 1})
-if s:result !=# 0
-  call s:assert.fail('k8s is not ready, result: ' .. s:result)
-endif
+call WaitDenopsLoading()
+
+function s:suite.before_each()
+  K8sNodes
+  normal! j
+endfunction
+
+function s:suite.after_each()
+  bw!
+endfunction
 
 function s:suite.list()
-  :K8sNodes
-  let contents = getline(1, '$')
-  call s:expect(len(contents)).to_be_greater_than(1)
-  bw
+  call ListBufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'k8s-nodes')
 endfunction
 
 function s:suite.pods()
-  :K8sNodes
   call k8s#do_action('nodes:pods')
-  let contents = getline(1, '$')
-  call s:expect(len(contents)).to_be_greater_than(1)
-  bw
+  call BufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'k8s-pods')
 endfunction
 
 function s:suite.describe()
-  :K8sNodes
   call k8s#do_action('nodes:describe')
-  let contents = getline(1, '$')
-  call s:assert.not_equals(len(getline(1, '$')), 0)
-  bw
+  call BufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'k8s-nodes-describe')
 endfunction
 
 function s:suite.yaml()
-  :K8sNodes
   call k8s#do_action('nodes:yaml')
-  let contents = getline(1, '$')
-  call s:assert.not_equals(len(getline(1, '$')), 0)
-  bw
+  call BufferNotEmpty(bufnr())
+  call s:assert.equals(&ft, 'yaml')
 endfunction
