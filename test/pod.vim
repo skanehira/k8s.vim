@@ -10,6 +10,7 @@ endif
 
 " make resource for test
 call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/pod.yaml')
+call k8s#util#cli#kubectl('wait', 'pod/sample-pod', '--for', 'condition=Ready')
 
 function s:suite.list()
   e k8s://pods/list?labels=app=sample-app
@@ -83,7 +84,8 @@ function! s:suite.delete()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:delete')
-  let result = k8s#util#cli#kubectl('wait', 'pod', '-l', 'app=sample-app', '--for', 'delete')
-  call s:assert.equals(result, 'pod/sample-pod condition met')
+  call k8s#util#cli#kubectl('wait', 'pod/sample-pod', '--for', 'delete')
+  let result = k8s#util#cli#kubectl('get', 'pod', '--field-selector=metadata.name=sample-pod')
+  call s:assert.equals(result, 'No resources found in default namespace.')
   bw!
 endfunction
