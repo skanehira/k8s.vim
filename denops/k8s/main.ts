@@ -1,6 +1,6 @@
 import { autocmd, batch, Denops } from "./deps.ts";
 import { actions } from "./action.ts";
-import { ensureResource } from "./_util/ensure.ts";
+import { isResource } from "./_util/unknown.ts";
 import { loadBuffer } from "./resource.ts";
 
 export async function main(denops: Denops): Promise<void> {
@@ -55,7 +55,7 @@ export async function main(denops: Denops): Promise<void> {
     },
 
     async action(resource: unknown): Promise<void> {
-      if (!ensureResource(resource)) {
+      if (!isResource(resource)) {
         console.error(`${Deno.inspect(resource)} is not Resource`);
         return;
       }
