@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sample-app
+      app: sample-deployment
   template:
     metadata:
       labels:
-        app: sample-app
+        app: sample-deployment
     spec:
       containers:
         - name: redis
