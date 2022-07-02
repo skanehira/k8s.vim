@@ -30,3 +30,11 @@ function s:suite.describe()
   call s:assert.not_equals(len(getline(1, '$')), 0)
   bw
 endfunction
+
+function s:suite.yaml()
+  :K8sNodes
+  call k8s#do_action('nodes:yaml')
+  let contents = getline(1, '$')
+  call s:assert.not_equals(len(getline(1, '$')), 0)
+  bw
+endfunction
