@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: sample-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: sample-app
@@ -13,5 +13,5 @@ spec:
         app: sample-app
     spec:
       containers:
-      - name: nginx-container
-        image: amsy810/echo-nginx:v2.0
+        - name: redis
+          image: redis:3.2

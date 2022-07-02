@@ -8,22 +8,17 @@ if s:result !=# 0
   call s:assert.fail('k8s is not ready, result: ' .. s:result)
 endif
 
-function s:kubectl(...) abort
-  call system(join(['kubectl'] + a:000))
-endfunction
-
 " make resource for test
-call s:kubectl('apply', '-f', 'test/manifests/deployment.yaml')
-call s:kubectl('wait', 'pod', '-l', 'app=sample', '--for', 'condition=Ready')
+call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/pod.yaml')
 
-function s:suite.pod_list()
+function s:suite.list()
   e k8s://pods/list?labels=app=sample-app
   let contents = getline(1, '$')
   call s:expect(len(contents)).to_be_greater_than(1)
   bw
 endfunction
 
-function! s:suite.pod_describe()
+function! s:suite.describe()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:describe')
@@ -31,7 +26,7 @@ function! s:suite.pod_describe()
   bw!
 endfunction
 
-function! s:suite.pod_yaml()
+function! s:suite.yaml()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:yaml')
@@ -39,7 +34,7 @@ function! s:suite.pod_yaml()
   bw!
 endfunction
 
-function! s:suite.pod_events()
+function! s:suite.events()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:events')
@@ -47,7 +42,7 @@ function! s:suite.pod_events()
   bw!
 endfunction
 
-function! s:suite.pod_containers()
+function! s:suite.containers()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:containers')
@@ -56,7 +51,7 @@ function! s:suite.pod_containers()
   bw!
 endfunction
 
-function! s:suite.pod_containers_shell()
+function! s:suite.containers_shell()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:containers')
@@ -67,7 +62,7 @@ function! s:suite.pod_containers_shell()
   bw!
 endfunction
 
-function! s:suite.pod_logs()
+function! s:suite.logs()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:logs')
@@ -76,10 +71,19 @@ function! s:suite.pod_logs()
   bw!
 endfunction
 
-function! s:suite.pod_shell()
+function! s:suite.shell()
   e k8s://pods/list?labels=app=sample-app
   normal! j
   call k8s#do_action('pods:shell')
   call s:assert.equals(&buftype, 'terminal')
+  bw!
+endfunction
+
+function! s:suite.delete()
+  e k8s://pods/list?labels=app=sample-app
+  normal! j
+  call k8s#do_action('pods:delete')
+  let result = k8s#util#cli#kubectl('wait', 'pod', '-l', 'app=sample-app', '--for', 'delete')
+  call s:assert.equals(result, 'pod/sample-pod condition met')
   bw!
 endfunction
