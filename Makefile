@@ -1,32 +1,20 @@
-PLUGIN_NAME=$$(basename `git rev-parse --show-toplevel` .vim)
-
-.PHONY: init
-init:
-	@mv denops/template denops/$(PLUGIN_NAME)
-
-.PHONY: coverage
-coverage: test-local
-	@deno coverage cov
-	@rm -rf cov
-
-.PHONY: test-local
-test-local:
-	@DENOPS_PATH=$$GHQ_ROOT/github.com/vim-denops/denops.vim 
-	\ DENOPS_TEST_NVIM=$$(which nvim) DENOPS_TEST_VIM=$$(which vim) TZ=UTC deno test -A --unstable
-
-.PHONY: test-local-e2e
-test-local-e2e:
-	@THEMIS_VIM=$$(which vim) themis --runtimepath $$GHQ_ROOT/github.com/vim-denops/denops.vim
-	@THEMIS_VIM=$$(which nvim) themis --runtimepath $$GHQ_ROOT/github.com/vim-denops/denops.vim
+PLUGIN_NAME := $$(basename `git rev-parse --show-toplevel` .vim)
+DENOPS := $${DENOPS_PATH:-$$GHQ_ROOT/github.com/vim-denops/denops.vim}
+VIM := $${DENOPS_TEST_VIM:-$$(which vim)}
+NVIM := $${DENOPS_TEST_NVIM:-$$(which nvim)}
 
 .PHONY: test
 test:
-	@deno test -A --unstable
+	@DENOPS_PATH=$(DENOPS) \
+	  DENOPS_TEST_NVIM=$(NVIM) \
+		DENOPS_TEST_VIM=$(Vim) \
+		TZ=UTC \
+		deno test -A --unstable
 
 .PHONY: test-e2e
 test-e2e:
-	@THEMIS_VIM=$$DENOPS_TEST_VIM themis --runtimepath $$DENOPS_PATH
-	@THEMIS_VIM=$$DENOPS_TEST_NVIM themis --runtimepath $$DENOPS_PATH
+	@THEMIS_VIM=$(VIM) themis --runtimepath $(DENOPS)
+	@THEMIS_VIM=$(NVIM) themis --runtimepath $(DENOPS)
 
 .PHONY: deps
 deps:
