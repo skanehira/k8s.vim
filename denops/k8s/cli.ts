@@ -90,6 +90,7 @@ export async function describeResource(resource: string, name: string, opts?: {
 
 export async function deleteResource(resource: string, name: string, opts?: {
   namespace?: string;
+  force?: boolean;
 }): Promise<void> {
   const cmd = [
     "kubectl",
@@ -99,6 +100,9 @@ export async function deleteResource(resource: string, name: string, opts?: {
   ];
   if (opts?.namespace) {
     cmd.push("-n", opts.namespace);
+  }
+  if (opts?.force) {
+    cmd.push("--force");
   }
   await run(cmd);
 }

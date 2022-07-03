@@ -4,17 +4,13 @@ let s:expect = themis#helper('expect')
 
 call WaitDenopsLoading()
 
-" make resource for test
-call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/pod.yaml')
-call k8s#util#cli#kubectl('wait', 'pod/sample-pod', '--for', 'condition=Ready')
-
 function s:suite.before_each()
-  e k8s://pods/list?labels=app=sample-app
-  normal! j
-endfunction
+" make resource for test
+  call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/pod.yaml')
+  call k8s#util#cli#kubectl('wait', 'pod/sample-pod', '--for', 'condition=Ready')
 
-function s:suite.after_each()
-  bw!
+  e! k8s://pods/list?labels=app=sample-app
+  normal! j
 endfunction
 
 function s:suite.list()
@@ -63,9 +59,14 @@ function! s:suite.shell()
 endfunction
 
 function! s:suite.delete()
-  normal! j
   call k8s#do_action('pods:delete')
   call k8s#util#cli#kubectl('wait', 'pod/sample-pod', '--for', 'delete')
+  let result = k8s#util#cli#kubectl('get', 'pod', '--field-selector=metadata.name=sample-pod')
+  call s:assert.equals(result, 'No resources found in default namespace.')
+endfunction
+
+function! s:suite.kill()
+  call k8s#do_action('pods:kill')
   let result = k8s#util#cli#kubectl('get', 'pod', '--field-selector=metadata.name=sample-pod')
   call s:assert.equals(result, 'No resources found in default namespace.')
 endfunction

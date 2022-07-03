@@ -258,6 +258,9 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:pods:delete)*
   Delete pod.
 
+*<Plug>(k8s:pods:kill)*
+  Force delete pod.
+
 							*k8s-services-key-mappings*
 *<Plug>(k8s:svcs:pods)*
   Show service's pods.

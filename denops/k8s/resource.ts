@@ -23,6 +23,7 @@ export type ResourceOptions = {
   labels?: string;
   format?: string;
   kind?: string;
+  force?: boolean;
 };
 
 export type Resource = {

@@ -153,5 +153,6 @@ export async function remove(
   }
 
   const namespace = resource.opts.namespace;
-  await deleteResource(resource.type, resource.opts.name, { namespace });
+  const force = resource.opts?.force;
+  await deleteResource(resource.type, resource.opts.name, { namespace, force });
 }

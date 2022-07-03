@@ -59,7 +59,7 @@ function! k8s#pod#yaml() abort
   exe printf('drop k8s://pods/yaml?namespace=%s&name=%s', namespace, name)
 endfunction
 
-function! k8s#pod#delete() abort
+function! s:delete(force) abort
   let pod = s:get_pod()
   let resource = {
         \ 'type': 'pods',
@@ -67,10 +67,19 @@ function! k8s#pod#delete() abort
         \ 'opts': {
             \ 'name': pod.metadata.name,
             \ 'namespace': pod.metadata.namespace,
+            \ 'force': a:force,
           \ }
         \ }
   cal denops#notify('k8s', 'action', [resource])
   e
+endfunction
+
+function! k8s#pod#kill() abort
+  call s:delete(v:true)
+endfunction
+
+function! k8s#pod#delete() abort
+  call s:delete(v:false)
 endfunction
 
 function! k8s#pod#events() abort

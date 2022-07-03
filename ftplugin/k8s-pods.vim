@@ -19,6 +19,9 @@ nnoremap <buffer> <silent> <Plug>(k8s:pods:yaml)
 nnoremap <buffer> <silent> <Plug>(k8s:pods:delete)
       \ <Cmd>call k8s#do_action('pods:delete')<CR>
 
+nnoremap <buffer> <silent> <Plug>(k8s:pods:kill)
+      \ <Cmd>call k8s#do_action('pods:kill')<CR>
+
 nnoremap <buffer> <silent> <Plug>(k8s:pods:events)
       \ <Cmd>call k8s#do_action('pods:events')<CR>
 

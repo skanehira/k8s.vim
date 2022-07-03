@@ -10,6 +10,7 @@ let s:action_list = {
       \ 'pods:shell': function('k8s#pod#shell'),
       \ 'pods:yaml': function('k8s#pod#yaml'),
       \ 'pods:delete': function('k8s#pod#delete'),
+      \ 'pods:kill': function('k8s#pod#kill'),
       \ 'pods:events': function('k8s#pod#events'),
       \ 'nodes:pods': function('k8s#node#pods'),
       \ 'nodes:describe': function('k8s#node#describe'),
@@ -29,11 +30,11 @@ let s:action_list = {
       \ 'secrets:delete': function('k8s#secret#delete'),
       \ }
 
-function! k8s#do_action(action) abort
+function! k8s#do_action(action, ...) abort
   if a:action ==# ''
     return
   endif
-  call call(s:action_list[a:action] , [])
+  call call(s:action_list[a:action] , a:000)
 endfunction
 
 function! k8s#kubectl(...) abort
