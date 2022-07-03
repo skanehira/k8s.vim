@@ -8,17 +8,19 @@ import { getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
 import { orUnknown } from "./_util/unknown.ts";
 
-export function renderPodStatusAndReady(
+export function renderPodProperties(
   pod: IoK8sApiCoreV1Pod,
-): [string, string] {
+): [string, string, number] {
   let status = pod.status?.phase as string ?? "Unknown";
   if (pod.status?.reason) {
     status = pod.status.reason;
   }
   let initializing = false;
+  let restarts = 0;
 
   if (pod.status?.initContainerStatuses) {
     for (const [i, container] of pod.status.initContainerStatuses.entries()) {
+      restarts += container.restartCount;
       if (
         container.state?.terminated && container.state.terminated.exitCode === 0
       ) {
@@ -56,11 +58,13 @@ export function renderPodStatusAndReady(
   let readyContainers = 0;
 
   if (!initializing && pod.status?.containerStatuses) {
+    restarts = 0;
     let hasRunning = false;
     const containers = pod.status.containerStatuses;
 
     for (let i = containers.length - 1; i >= 0; i--) {
       const container = containers[i];
+      restarts += container.restartCount;
       if (!container.state) {
         continue;
       }
@@ -99,7 +103,7 @@ export function renderPodStatusAndReady(
   }
 
   const ready = `${readyContainers}/${totalContainers}`;
-  return [status, ready];
+  return [status, ready, restarts];
 }
 
 function hasPodReadyCondition(
@@ -116,12 +120,13 @@ function hasPodReadyCondition(
 export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
   const body = pods.map((pod) => {
     const podIPs = pod.status?.podIPs?.map((podip) => podip.ip ?? "");
-    const [status, ready] = renderPodStatusAndReady(pod);
+    const [status, ready, restarts] = renderPodProperties(pod);
     return [
       orUnknown(pod.metadata?.namespace),
       orUnknown(pod.metadata?.name),
       ready,
       status,
+      restarts,
       orUnknown(podIPs?.join(" ")),
       orUnknown(pod.spec?.nodeName),
       orUnknown(pod.status?.startTime?.toLocaleString()),
@@ -132,6 +137,7 @@ export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
     "NAME",
     "READY",
     "STATUS",
+    "RESTARTS",
     "IP",
     "NODE",
     "START TIME",

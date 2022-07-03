@@ -1,17 +1,17 @@
-NAMESPACE NAME   READY STATUS                 IP                      NODE               START TIME           
-default   test8  0/1   Init:0/1               10.244.0.86 12.244.0.86 kind-control-plane 6/24/2022, 6:29:59 AM
-default   test7  1/1   Running                10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
-default   test6  1/1   NotReady               10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
-default   test5  1/1   pod reason             10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
-default   test4  1/1   Failed                 10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
-default   test3  0/1   ContainerWaitingReason 10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
-default   test2  1/1   ContainerWaitingReason 10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
-default   test1  1/1   Pending                10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
-default   test9  0/1   terminated reason      <unknown>               kind-control-plane <unknown>            
-sample    test10 0/1   Init:ExitCode:1        <unknown>               kind-control-plane <unknown>            
-sample    test11 0/1   Init:waiting reason    <unknown>               sample-node        <unknown>            
-sample    test12 0/1   Init:0/1               <unknown>               sample-node        <unknown>            
-default   test13 0/1   Signal:9               <unknown>               kind-control-plane 6/24/2022, 6:29:59 AM
-default   test14 0/1   ExitCode:1             <unknown>               kind-control-plane 6/24/2022, 6:29:59 AM
-default   test15 0/1   Unknown                <unknown>               kind-control-plane <unknown>            
-default   test16 0/1   Terminating            <unknown>               kind-control-plane <unknown>            
+NAMESPACE NAME   READY STATUS                 RESTARTS IP                      NODE               START TIME           
+default   test8  0/1   Init:0/1               3        10.244.0.86 12.244.0.86 kind-control-plane 6/24/2022, 6:29:59 AM
+default   test7  1/1   Running                6        10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
+default   test6  1/1   NotReady               6        10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
+default   test5  1/1   pod reason             6        10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
+default   test4  1/1   Failed                 6        10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
+default   test3  0/1   ContainerWaitingReason 6        10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
+default   test2  1/1   ContainerWaitingReason 6        10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
+default   test1  1/1   Pending                6        10.244.0.86             kind-control-plane 6/24/2022, 6:29:59 AM
+default   test9  0/1   terminated reason      1        <unknown>               kind-control-plane <unknown>            
+sample    test10 0/1   Init:ExitCode:1        1        <unknown>               kind-control-plane <unknown>            
+sample    test11 0/1   Init:waiting reason    1        <unknown>               sample-node        <unknown>            
+sample    test12 0/1   Init:0/1               1        <unknown>               sample-node        <unknown>            
+default   test13 0/1   Signal:9               1        <unknown>               kind-control-plane 6/24/2022, 6:29:59 AM
+default   test14 0/1   ExitCode:1             1        <unknown>               kind-control-plane 6/24/2022, 6:29:59 AM
+default   test15 0/1   Unknown                0        <unknown>               kind-control-plane <unknown>            
+default   test16 0/1   Terminating            0        <unknown>               kind-control-plane <unknown>            

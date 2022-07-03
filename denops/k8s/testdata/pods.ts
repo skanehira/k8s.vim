@@ -692,6 +692,7 @@ export const pods: any[] = [
     "status": {
       "initContainerStatuses": [
         {
+          restartCount: 1,
           state: {
             terminated: {
               "reason": "terminated reason",
@@ -720,6 +721,7 @@ export const pods: any[] = [
     "status": {
       "initContainerStatuses": [
         {
+          restartCount: 1,
           state: {
             terminated: {
               "exitCode": 1,
@@ -748,6 +750,7 @@ export const pods: any[] = [
     "status": {
       "initContainerStatuses": [
         {
+          restartCount: 1,
           state: {
             waiting: {
               "reason": "waiting reason",
@@ -778,7 +781,9 @@ export const pods: any[] = [
     },
     "status": {
       "initContainerStatuses": [
-        {},
+        {
+          restartCount: 1,
+        },
       ],
     },
   },
@@ -802,6 +807,7 @@ export const pods: any[] = [
         {
           "image": "docker.io/amsy810/echo-nginx:v2.0",
           "name": "nginx-container",
+          restartCount: 1,
           "state": {
             "terminated": {
               "signal": 9,
@@ -830,6 +836,7 @@ export const pods: any[] = [
     "status": {
       "containerStatuses": [
         {
+          restartCount: 1,
           "image": "docker.io/amsy810/echo-nginx:v2.0",
           "name": "nginx-container",
           "state": {
