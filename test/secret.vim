@@ -5,7 +5,7 @@ let s:expect = themis#helper('expect')
 call WaitDenopsLoading()
 
 " make resource for test
-call k8s#util#cli#kubectl('apply', '-f', 'test/manifests/secret.yaml')
+call k8s#kubectl('apply', '-f', 'test/manifests/secret.yaml')
 
 function s:suite.before_each()
   e k8s://secrets/list?fields=metadata.name=sample-secret
@@ -41,6 +41,6 @@ endfunction
 
 function! s:suite.delete()
   call k8s#do_action('secrets:delete')
-  let result = k8s#util#cli#kubectl('get', 'secrets', '--field-selector=metadata.name=sample-secrets')
+  let result = k8s#kubectl('get', 'secrets', '--field-selector=metadata.name=sample-secrets')
   call s:assert.equals(result, 'No resources found in default namespace.')
 endfunction

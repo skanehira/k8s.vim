@@ -24,7 +24,7 @@ function! k8s#secret#edit() abort
   let secret = s:get_secret()
   let name = secret.metadata.name
   let namespace = secret.metadata.namespace
-  call k8s#util#terminal#run('kubectl', 'edit', 'secrets', name, '-n', namespace)
+  call k8s#util#terminal#kubectl('edit', 'secrets', name, '-n', namespace)
 endfunction
 
 function! k8s#secret#delete() abort

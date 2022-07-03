@@ -25,7 +25,7 @@ function! k8s#deployment#edit() abort
   let dep = s:get_deployment()
   let name = dep.metadata.name
   let namespace = dep.metadata.namespace
-  call k8s#util#terminal#run('kubectl', 'edit', 'deployment', name, '-n', namespace)
+  call k8s#util#terminal#kubectl('edit', 'deployment', name, '-n', namespace)
 endfunction
 
 function k8s#deployment#pods() abort

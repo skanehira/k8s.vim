@@ -38,6 +38,6 @@ function! k8s#do_action(action, ...) abort
 endfunction
 
 function! k8s#kubectl(...) abort
-  let cmd = ['kubectl'] + a:000
-  call call('k8s#util#terminal#run', cmd)
+  let result = system(join(['kubectl'] + a:000))
+  return trim(result)
 endfunction
