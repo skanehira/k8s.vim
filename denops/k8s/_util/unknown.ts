@@ -10,3 +10,7 @@ export function isResource(arg: unknown): arg is Resource {
   }
   return true;
 }
+
+export function orUnknown(value: string | undefined): string {
+  return value ?? "<unknown>";
+}

@@ -5,6 +5,7 @@ import { IoK8sApiCoreV1NodeCondition } from "./models/IoK8sApiCoreV1NodeConditio
 import { Resource } from "./resource.ts";
 import { getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
+import { orUnknown } from "./_util/unknown.ts";
 
 export function renderNodeStatus(node: IoK8sApiCoreV1Node): string {
   const status: string[] = [];
@@ -83,16 +84,16 @@ export function renderNodeList(
 ): string[] {
   const body = nodes.map((node) => {
     return [
-      node.metadata?.name ?? "<unknown>",
+      orUnknown(node.metadata?.name),
       renderNodeStatus(node),
       getRole(node),
-      node.metadata?.creationTimestamp?.toLocaleString() ?? "<unknown>",
-      node.status?.nodeInfo?.kubeletVersion ?? "<unknown>",
+      orUnknown(node.metadata?.creationTimestamp?.toLocaleString()),
+      orUnknown(node.status?.nodeInfo?.kubeletVersion),
       getNodeInternalIP(node),
       getNodeExternalIP(node),
-      node.status?.nodeInfo?.osImage ?? "<unknown>",
-      node.status?.nodeInfo?.kernelVersion ?? "<unknown>",
-      node.status?.nodeInfo?.containerRuntimeVersion ?? "<unknown>",
+      orUnknown(node.status?.nodeInfo?.osImage),
+      orUnknown(node.status?.nodeInfo?.kernelVersion),
+      orUnknown(node.status?.nodeInfo?.containerRuntimeVersion),
     ];
   });
   const header = [

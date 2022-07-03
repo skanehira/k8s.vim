@@ -6,6 +6,7 @@ import { IoK8sApiCoreV1PodCondition } from "./models/IoK8sApiCoreV1PodCondition.
 import { Resource } from "./resource.ts";
 import { getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
+import { orUnknown } from "./_util/unknown.ts";
 
 export function renderPodStatusAndReady(
   pod: IoK8sApiCoreV1Pod,
@@ -114,13 +115,13 @@ export function renderPodList(pods: IoK8sApiCoreV1Pod[]): string[] {
     const podIPs = pod.status?.podIPs?.map((podip) => podip.ip ?? "");
     const [status, ready] = renderPodStatusAndReady(pod);
     return [
-      pod.metadata?.namespace ?? "<unknown>",
-      pod.metadata?.name ?? "<unknown>",
+      orUnknown(pod.metadata?.namespace),
+      orUnknown(pod.metadata?.name),
       ready,
       status,
-      podIPs?.join(" ") ?? "<unknown>",
-      pod.spec?.nodeName ?? "<unknown>",
-      pod.status?.startTime?.toLocaleString() ?? "<unknown>",
+      orUnknown(podIPs?.join(" ")),
+      orUnknown(pod.spec?.nodeName),
+      orUnknown(pod.status?.startTime?.toLocaleString()),
     ];
   });
   const header = [

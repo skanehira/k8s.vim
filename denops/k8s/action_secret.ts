@@ -4,13 +4,14 @@ import { getResourceAsObject } from "./cli.ts";
 import { IoK8sApiCoreV1Secret } from "./models/IoK8sApiCoreV1Secret.ts";
 import { IoK8sApiCoreV1SecretList } from "./models/IoK8sApiCoreV1SecretList.ts";
 import { drawRows } from "./_util/drawer.ts";
+import { orUnknown } from "./_util/unknown.ts";
 
 export function renderSecretList(secrets: IoK8sApiCoreV1Secret[]): string[] {
   const body = secrets.map((secret) => {
     return [
-      secret.metadata?.namespace ?? "<unknown>",
-      secret.metadata?.name ?? "<unknown>",
-      secret.type ?? "<unknown>",
+      orUnknown(secret.metadata?.namespace),
+      orUnknown(secret.metadata?.name),
+      orUnknown(secret.type),
       Object.values(secret.data ?? {}).length.toString(),
       secret.metadata?.creationTimestamp?.toLocaleString() ?? "",
     ];

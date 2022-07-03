@@ -3,6 +3,7 @@ import { IoK8sApiCoreV1Event } from "./models/IoK8sApiCoreV1Event.ts";
 import { Resource } from "./resource.ts";
 import { getEvents } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
+import { orUnknown } from "./_util/unknown.ts";
 
 export function renderEvents(events: IoK8sApiCoreV1Event[]): string[] {
   const header = [
@@ -28,10 +29,10 @@ export function renderEvents(events: IoK8sApiCoreV1Event[]): string[] {
     const kind = event.involvedObject.kind?.toLowerCase() ?? "";
     const name = event.involvedObject?.name ?? "";
     const line = [
-      event.involvedObject.namespace ?? "<unknown>",
-      event.lastTimestamp?.toLocaleString() ?? "<unknown>",
-      event.type ?? "<unknown>",
-      event.reason ?? "<unknown>",
+      orUnknown(event.involvedObject.namespace),
+      orUnknown(event.lastTimestamp?.toLocaleString()),
+      orUnknown(event.type),
+      orUnknown(event.reason),
       `${kind}/${name}`,
       source,
       event.message ?? "",

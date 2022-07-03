@@ -4,20 +4,19 @@ import { IoK8sApiAppsV1DeploymentList } from "./models/IoK8sApiAppsV1DeploymentL
 import { IoK8sApiAppsV1Deployment } from "./models/IoK8sApiAppsV1Deployment.ts";
 import { getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
+import { orUnknown } from "./_util/unknown.ts";
 
 export function renderDeploymentList(
   deployments: IoK8sApiAppsV1Deployment[],
 ): string[] {
   const body = deployments.map((dep) => {
     return [
-      dep.metadata?.namespace ?? "<unknown>",
-      dep.metadata?.name ?? "<unknown>",
+      orUnknown(dep.metadata?.namespace),
+      orUnknown(dep.metadata?.name),
       `${dep.status?.readyReplicas ?? 0}/${dep.spec?.replicas ?? 0}`,
       dep.status?.updatedReplicas ?? "0",
       dep.status?.availableReplicas ?? "0",
-      dep.metadata?.creationTimestamp
-        ? dep.metadata.creationTimestamp.toLocaleString()
-        : "<unknown>",
+      orUnknown(dep.metadata?.creationTimestamp?.toLocaleString()),
     ];
   });
   const header = [

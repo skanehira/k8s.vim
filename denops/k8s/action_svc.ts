@@ -5,6 +5,7 @@ import { IoK8sApiCoreV1ServiceList } from "./models/IoK8sApiCoreV1ServiceList.ts
 import { IoK8sApiCoreV1LoadBalancerStatus } from "./models/IoK8sApiCoreV1LoadBalancerStatus.ts";
 import { getResourceAsObject } from "./cli.ts";
 import { drawRows } from "./_util/drawer.ts";
+import { orUnknown } from "./_util/unknown.ts";
 
 function getLBIPs(lb: IoK8sApiCoreV1LoadBalancerStatus): string[] {
   if (!lb.ingress) return [];
@@ -85,14 +86,14 @@ export function renderSVCList(svcs: IoK8sApiCoreV1Service[]): string[] {
   ];
   const body = svcs.map((svc) => {
     const line = [
-      svc.metadata?.namespace ?? "<unknown>",
-      svc.metadata?.name ?? "<unknown>",
-      svc.spec?.type ?? "<unknown>",
+      orUnknown(svc.metadata?.namespace),
+      orUnknown(svc.metadata?.name),
+      orUnknown(svc.spec?.type),
       svc.spec?.clusterIPs?.at(0) ?? "<none>",
       getExternalIP(svc),
       getSelector(svc),
       getPorts(svc),
-      svc.metadata?.creationTimestamp?.toLocaleString() ?? "<unknown>",
+      orUnknown(svc.metadata?.creationTimestamp?.toLocaleString()),
     ];
     return line;
   });
