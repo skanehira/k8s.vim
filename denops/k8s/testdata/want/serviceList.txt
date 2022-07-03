@@ -1,0 +1,12 @@
+NAMESPACE   NAME                     TYPE         CLUSTER IP    EXTERNAL IP           SELECTOR               PORT(S)                                                  START TIME          
+default     kubernetes               ClusterIP    10.96.0.1     <none>                                       https:443->TCP/6443                                      2022-06-25T20:44:34Z
+default     sample-externalip        ClusterIP    10.96.62.146  172.20.0.2,172.20.0.3 app=sample-app         http-port:8080->TCP/80                                   2022-06-29T15:52:36Z
+default     sample-externalname      ExternalName <none>        external.example.com                         <none>                                                   2022-06-29T16:45:11Z
+default     sample-headless          ClusterIP    None          <none>                app=sample-app         http-port:80->TCP/80                                     2022-06-29T16:15:22Z
+default     sample-nodeport          NodePort     10.96.27.68   <none>                app=sample-app         http-port:8080->TCP/30080->TCP/80                        2022-06-29T15:21:26Z
+default     sample-none-selector     ClusterIP    10.96.246.177 <none>                                       8080->TCP/80                                             2022-06-29T17:01:58Z
+default     sample-registry-nodeport NodePort     10.96.48.129  <none>                app=docker-registry    5000->TCP/30000->TCP/5000                                2022-06-30T05:30:23Z
+default     sample-subdomain         ClusterIP    None          <none>                app=sample-app         <none>                                                   2022-06-29T16:36:01Z
+kube-system kube-dns                 LoadBalancer 10.96.0.10    <pending>             k8s-app=kube-dns       dns:53->UDP/53 dns-tcp:53->TCP/53 metrics:9153->TCP/9153 2022-06-25T20:44:36Z
+kube-system metrics-server           ClusterIP    10.96.220.186 <none>                k8s-app=metrics-server https:443->TCP/https                                     2022-06-27T10:36:57Z
+test        sample                   LoadBalancer 10.96.220.186 11.11.11.11           k8s-app=metrics-server https:443->TCP/https                                     2022-06-27T10:36:57Z
