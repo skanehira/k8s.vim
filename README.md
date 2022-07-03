@@ -26,5 +26,8 @@ A Vim/Neovim plugin for kubernetes
 Also you can do some action(like show pod's logs).
 Please refer help for more details.
 
+## Related Project
+- [denops-docker.vim](https://github.com/skanehira/denops-docker.vim)
+
 ## Author
 skanehira
