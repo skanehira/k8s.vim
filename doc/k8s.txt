@@ -242,12 +242,17 @@ You can define your own keymaps like bellow.
 *<Plug>(k8s:pods:containers:shell)*
   Run `/bin/sh` in container.
 
+*<Plug>(k8s:pods:containers:exec)*
+  Execute inputed cmd in container.
 							*k8s-pods-key-mappings*
 *<Plug>(k8s:pods:containers)*
   Show pod's conatiners.
 
 *<Plug>(k8s:pods:shell)*
   Run `/bin/sh` in pod.
+
+*<Plug>(k8s:pods:exec)*
+  Execute inputed cmd in pod.
 
 *<Plug>(k8s:pods:logs)*
   Show pod's logs.

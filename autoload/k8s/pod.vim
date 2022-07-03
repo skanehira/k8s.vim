@@ -22,27 +22,51 @@ endfunction
 
 let s:shellcmd = ['sh', '-c', '"[ -e /bin/bash ] || [ -e /usr/local/bin/bash ] && bash || sh"']
 
-function! k8s#pod#shell() abort
+function! s:pod_exec(cmd) abort
   let pod = s:get_pod()
   if len(pod.spec.containers) ==# 0
     return
   endif
   let name = pod.metadata.name
   let namespace = pod.metadata.namespace
-  let cmd = ['exec', '-n', namespace, '-it', 'pods/' .. name, '--'] + s:shellcmd
-  call call('k8s#util#terminal#kubectl', cmd)
+  let args = ['exec', '-n', namespace, '-it', 'pods/' .. name, '--'] + a:cmd
+  call call('k8s#util#terminal#kubectl', args)
 endfunction
 
-function! k8s#pod#container_shell() abort
+function! k8s#pod#shell() abort
+  call s:pod_exec(s:shellcmd)
+endfunction
+
+function! k8s#pod#exec() abort
+  let cmd = input('cmd: ')
+  if trim(cmd) ==# ''
+    return
+  endif
+  call s:pod_exec([cmd])
+endfunction
+
+function! s:container_exec(cmd) abort
   let namespace = b:k8s_pod.metadata.namespace
-  if len(b:k8s_pod.spec.containers) ==# 0
+  if len(b:k8s_pod.status.containerStatuses) ==# 0
     return
   endif
   let pod_name = b:k8s_pod.metadata.name
-  let container = b:k8s_pod.spec.containers[line(".")-2]
-  let cmd = ['exec', '-n', namespace, '-it', 'pods/' .. pod_name,
-        \ '--container', container.name, '--'] + s:shellcmd
-  call call('k8s#util#terminal#kubectl', cmd)
+  let container = b:k8s_pod.status.containerStatuses[line(".")-2]
+  let args = ['exec', '-n', namespace, '-it', 'pods/' .. pod_name,
+        \ '--container', container.name, '--'] + a:cmd
+  call call('k8s#util#terminal#kubectl', args)
+endfunction
+
+function! k8s#pod#container_shell() abort
+  call s:container_exec(s:shellcmd)
+endfunction
+
+function! k8s#pod#container_exec() abort
+  let cmd = input('cmd: ')
+  if trim(cmd) ==# ''
+    return
+  endif
+  call s:container_exec([cmd])
 endfunction
 
 function! k8s#pod#describe() abort
