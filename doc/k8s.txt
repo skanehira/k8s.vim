@@ -81,6 +81,9 @@ COMMANDS					*k8s-commands*
   Open event list buffer.
   This is same as `:drop k8s://events/list`
 
+:K8sEventsWatch					*:K8sEventsWatch*
+  Watching events in terminal.
+
 ------------------------------------------------------------------------------
 BUFFER							*k8s-buffers*
 
