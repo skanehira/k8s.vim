@@ -29,7 +29,10 @@ export function renderPodStatusAndReady(
         if (container.state.terminated.reason) {
           status = container.state.terminated.reason;
         } else {
-          if (container.state.terminated.signal !== 0) {
+          if (
+            container.state.terminated.signal &&
+            container.state.terminated.signal !== 0
+          ) {
             status = `Init:Signal:${container.state.terminated.signal}`;
           } else {
             status = `Init:ExitCode:${container.state.terminated.exitCode}`;
@@ -66,8 +69,8 @@ export function renderPodStatusAndReady(
         status = state.waiting.reason;
       } else if (state.terminated && state.terminated.reason) {
         status = state.terminated.reason;
-      } else if (state.terminated && state.terminated.reason !== "") {
-        if (state.terminated.signal != 0) {
+      } else if (state.terminated && !state.terminated.reason) {
+        if (state.terminated.signal && state.terminated.signal != 0) {
           status = `Signal:${state.terminated.signal}`;
         } else {
           status = `ExitCode:${state.terminated.exitCode}`;
@@ -174,10 +177,10 @@ export function renderContainerStatus(
     const started = state.terminated.startedAt;
     return [state.terminated.reason, started ? started.toLocaleString() : ""];
   }
-  if (state.terminated && state.terminated.reason !== "") {
+  if (state.terminated && !state.terminated.reason) {
     const started = state.terminated.startedAt;
     const startTime = started ? started.toLocaleString() : "";
-    if (state.terminated.signal != 0) {
+    if (state.terminated.signal && state.terminated.signal != 0) {
       return [`Signal:${state.terminated.signal}`, startTime];
     } else {
       return [`ExitCode:${state.terminated.exitCode}`, startTime];

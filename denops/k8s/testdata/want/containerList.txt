@@ -1,3 +1,6 @@
-NAME            IMAGE                             READY STATE             START TIME           
-nginx-container docker.io/amsy810/echo-nginx:v2.0 true  Running           6/25/2022, 1:32:15 PM
-nginx-container docker.io/amsy810/echo-nginx:v2.0 true  terminated reason 6/25/2022, 1:32:07 PM
+NAME             IMAGE                             READY STATE             START TIME           
+nginx-container1 docker.io/amsy810/echo-nginx:v2.0 true  Running           6/25/2022, 1:32:15 PM
+nginx-container2 docker.io/amsy810/echo-nginx:v2.1 false terminated reason 6/25/2022, 1:32:07 PM
+nginx-container3 docker.io/amsy813/echo-nginx:v2.1 false waiting reason                         
+nginx-container4 docker.io/amsy816/echo-nginx:v4.1 false Signal:9                               
+nginx-container5 docker.io/amsy816/echo-nginx:v4.1 false ExitCode:1                             
