@@ -1,0 +1,25 @@
+NAMESPACE LAST TIME            TYPE   REASON            OBJECT                                  SOURCE                MESSAGE                                                                          COUNT
+default   2022-07-03T01:47:45Z Normal Scheduled         pod/sample-pod                          default-scheduler     Successfully assigned default/sample-pod to test-worker                          1    
+default   2022-07-03T01:47:46Z Normal Started           pod/sample-pod                          kubelet, test-worker  Started container redis                                                          1    
+default   2022-07-03T01:47:46Z Normal Created           pod/sample-pod                          kubelet, test-worker  Created container redis                                                          1    
+default   2022-07-03T01:47:46Z Normal Pulled            pod/sample-pod                          kubelet, test-worker  Container image "redis:3.2" already present on machine                           1    
+default   2022-07-03T01:47:46Z Normal ScalingReplicaSet deployment/sample-deployment            deployment-controller Scaled up replica set sample-deployment-76cd5587b7 to 1                          1    
+default   2022-07-03T01:47:46Z Normal SuccessfulCreate  replicaset/sample-deployment-76cd5587b7 replicaset-controller Created pod: sample-deployment-76cd5587b7-zgr7k                                  1    
+default   2022-07-03T01:47:46Z Normal Created           pod/sample-deployment-76cd5587b7-zgr7k  kubelet, test-worker  Created container redis                                                          1    
+default   2022-07-03T01:47:46Z Normal Pulled            pod/sample-deployment-76cd5587b7-zgr7k  kubelet, test-worker  Container image "redis:3.2" already present on machine                           1    
+default   2022-07-03T01:47:46Z Normal Scheduled         pod/sample-deployment-76cd5587b7-zgr7k  default-scheduler     Successfully assigned default/sample-deployment-76cd5587b7-zgr7k to test-worker  1    
+default   2022-07-03T01:47:47Z Normal Started           pod/sample-deployment-76cd5587b7-zgr7k  kubelet, test-worker  Started container redis                                                          1    
+default   2022-07-03T01:47:50Z Normal Killing           pod/sample-pod                          kubelet, test-worker  Stopping container redis                                                         2    
+default   2022-07-03T01:47:50Z Normal Killing           pod/sample-deployment-76cd5587b7-zgr7k  kubelet, test-worker  Stopping container redis                                                         1    
+default   2022-07-03T01:47:52Z Normal Scheduled         pod/sample-pod                          default-scheduler     Successfully assigned default/sample-pod to test-worker                          1    
+default   2022-07-03T01:47:53Z Normal Started           pod/sample-pod                          kubelet, test-worker  Started container redis                                                          1    
+default   2022-07-03T01:47:53Z Normal Created           pod/sample-pod                          kubelet, test-worker  Created container redis                                                          1    
+default   2022-07-03T01:47:53Z Normal Pulled            pod/sample-pod                          kubelet, test-worker  Container image "redis:3.2" already present on machine                           1    
+default   2022-07-03T01:47:54Z Normal ScalingReplicaSet deployment/sample-deployment            deployment-controller Scaled up replica set sample-deployment-76cd5587b7 to 1                          1    
+default   2022-07-03T01:47:54Z Normal SuccessfulCreate  replicaset/sample-deployment-76cd5587b7 replicaset-controller Created pod: sample-deployment-76cd5587b7-hb666                                  1    
+default   2022-07-03T01:47:54Z Normal Created           pod/sample-deployment-76cd5587b7-hb666  kubelet, test-worker2 Created container redis                                                          1    
+default   2022-07-03T01:47:54Z Normal Pulled            pod/sample-deployment-76cd5587b7-hb666  kubelet, test-worker2 Container image "redis:3.2" already present on machine                           1    
+default   2022-07-03T01:47:54Z Normal Scheduled         pod/sample-deployment-76cd5587b7-hb666  default-scheduler     Successfully assigned default/sample-deployment-76cd5587b7-hb666 to test-worker2 1    
+default   2022-07-03T01:47:55Z Normal Started           pod/sample-deployment-76cd5587b7-hb666  kubelet, test-worker2 Started container redis                                                          1    
+default   2022-07-03T01:47:56Z Normal Killing           pod/sample-pod                          kubelet, test-worker  Stopping container redis                                                         1    
+default   2022-07-03T01:48:00Z Normal Killing           pod/sample-deployment-76cd5587b7-hb666  kubelet, test-worker2 Stopping container redis                                                         2    

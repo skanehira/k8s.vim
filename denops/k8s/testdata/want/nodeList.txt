@@ -1,0 +1,4 @@
+NAME               STATUS                     ROLES         CREATED TIME         VERSION INTERNAL IP EXTERNAL IP OS IMAGE     KERNEL VERSION    RUNTIME           
+test-control-plane Unknown,SchedulingDisabled control-plane 2022-06-25T20:44:33Z v1.24.0 172.20.0.4  <none>      Ubuntu 21.10 5.10.104-linuxkit containerd://1.6.4
+test-worker        NotReady                   worker1       2022-06-25T20:44:54Z v1.24.0 172.20.0.3  <none>      Ubuntu 21.10 5.10.104-linuxkit containerd://1.6.4
+test-worker2       Ready                      worker2       2022-06-25T20:44:54Z v1.24.0 <none>      172.20.0.2  Ubuntu 21.10 5.10.104-linuxkit containerd://1.6.4
