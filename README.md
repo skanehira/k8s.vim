@@ -21,10 +21,22 @@ A Vim/Neovim plugin for kubernetes
 
 " Show all depployments
 :K8sDeployments
+
+" Show all services
+:K8sServices
+
+" Show all secrets
+:K8sSecrets
+
+" Show all events
+:K8sEvents
+
+" Show pod list filterd by 'app=sample-pod' of label
+:drop k8s://pods/list?labels=app=sample-pod
 ```
 
-Also you can do some action(like show pod's logs).
-Please refer help for more details.
+Also you can do some action(like show pod's logs, run shell in pod).
+Please see help for more details.
 
 ## Related Project
 - [denops-docker.vim](https://github.com/skanehira/denops-docker.vim)
