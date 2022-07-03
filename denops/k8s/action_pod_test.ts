@@ -15,7 +15,7 @@ Deno.test("render post list", async () => {
   const expectFile = path.join(
     testDir,
     "want",
-    "podlist.txt",
+    "podList.txt",
   );
   await assertEqualTextFile(actual, expectFile);
 });

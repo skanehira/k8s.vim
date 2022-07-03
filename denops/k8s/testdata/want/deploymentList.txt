@@ -1,0 +1,4 @@
+NAMESPACE          NAME                   READY UP-TO-DATE AVAILABLE CREATED TIME        
+kube-system        coredns                2/2   2          2         2022-06-25T20:44:36Z
+kube-system        metrics-server         1/1   1          1         2022-06-27T10:36:57Z
+local-path-storage local-path-provisioner 1/1   1          1         2022-06-25T20:44:39Z
