@@ -116,7 +116,8 @@ export async function yaml(
 
   const output = await getResourceAsText(resource);
   const rows = output.split("\n");
-  await drawRows(denops, rows, "yaml");
+  await drawRows(denops, rows, `k8s-${resource.type}-yaml`);
+  await denops.cmd("source $VIMRUNTIME/syntax/yaml.vim");
 }
 
 export async function describe(
