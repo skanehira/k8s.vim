@@ -32,6 +32,7 @@ INTERFACE			|k8s-interface|
   BUFFER			  |k8s-buffers|
   KEY-MAPPINGS			  |k8s-key-mappings|
   FUNCTIONS			  |k8s-functions|
+  CUSTOMIZE			  |k8s-customize|
 TODO				|k8s-todo|
 CHANGELOG			|k8s-changelog|
 
@@ -175,7 +176,7 @@ k8s://secrets/describe?name={value}[&namespace={value}]
 
 							*k8s-buffer-examples*
 
-Bellow is some example of k8s buffer.
+Below is some example of k8s buffer.
 >
 >
   " same as `kubectl get pods -A`
@@ -195,7 +196,7 @@ Bellow is some example of k8s buffer.
 KEY-MAPPINGS						*k8s-key-mappings*
 
 k8s.vim provide some plugin keymaps.
-You can define your own keymaps like bellow.
+You can define your own keymaps like below.
 
 >
   function! s:k8s_pods_keymap() abort
@@ -298,6 +299,40 @@ You can define your own keymaps like bellow.
 
 ------------------------------------------------------------------------------
 FUNCTIONS					*k8s-functions*
+
+k8s.vim provides some function that for define user commands.
+
+*k8s#kubectl({arg}...)*
+  Run `kubectl` and get result as string.
+  Below is a sample that getting node's metrics and set text to current
+  buffer.
+>
+  let result = k8s#kubectl('top', 'node', 'worker1')
+  call setline(1, split(result, "\n"))
+<
+
+*k8s#util#terminal#kubectl*
+  Run 'kubectl' in the terminal.
+  Below is a sample that attaching pod.
+>
+  call k8s#util#terminal#kubectl('attach', '-it', 'test-pod', '-c', 'test-container')
+<
+
+CUSTOMIZE					*k8s-customize*
+List buffers (like |k8s-pods|) contains resource json data in the buffer.
+The buffer variable name has prefix `k8s_`.
+
+You can get data and do something to resource.
+For example, if you want to debug pod at current line,
+you can define command like below.
+
+>
+  function! K8sDebugPod() abort
+    let pod = b:k8s_pods[line(".")-2]
+    call k8s#util#terminal#kubectl('debug', pod.metadata.name, '-it', '--image=busybox', '--', 'sh')
+  endfunction
+  command! K8sDebugPod :call K8sDebugPod()<CR>
+<
 
 ==============================================================================
 TODO						*k8s-todo*
