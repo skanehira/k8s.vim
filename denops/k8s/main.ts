@@ -11,7 +11,7 @@ export async function main(denops: Denops): Promise<void> {
     "command! K8sServices :drop k8s://services/list?namespace=all",
     "command! K8sSecrets :drop k8s://secrets/list?namespace=all",
     "command! K8sEvents :drop k8s://events/list",
-    "command! K8sEventsWatch :call k8s#util#terminal#kubectl('get', 'events', '-w')",
+    "command! K8sEventsWatch :call k8s#util#terminal#kubectl('get', 'events', '-A', '-w')",
     "command! -nargs=+ K8s :call k8s#util#terminal#kubectl(<f-args>)",
   ];
   await batch(denops, async (denops) => {
