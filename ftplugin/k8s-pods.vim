@@ -30,3 +30,6 @@ nnoremap <buffer> <silent> <Plug>(k8s:pods:shell)
 
 nnoremap <buffer> <silent> <Plug>(k8s:pods:exec)
       \ <Cmd>call k8s#do_action('pods:exec')<CR>
+
+nnoremap <buffer> <silent> <Plug>(k8s:pods:edit)
+      \ <Cmd>call k8s#do_action('pods:edit')<CR>

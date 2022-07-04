@@ -37,7 +37,13 @@ endfunction
 function s:suite.yaml()
   call k8s#do_action('services:yaml')
   call BufferNotEmpty(bufnr())
-  call s:assert.equals(&ft, 'yaml')
+  call s:assert.equals(&ft, 'k8s-services-yaml')
+endfunction
+
+function s:suite.edit()
+  call k8s#do_action('services:edit')
+  call BufferNotEmpty(bufnr())
+  call s:expect(bufnr()).job_status_to_be('running')
 endfunction
 
 function! s:suite.delete()

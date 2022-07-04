@@ -12,6 +12,12 @@ function! k8s#node#describe() abort
   exe printf('drop k8s://nodes/describe?name=%s', name)
 endfunction
 
+function! k8s#node#edit() abort
+  let node = s:get_node()
+  let name = node.metadata.name
+  call k8s#util#terminal#kubectl('edit', 'node', name)
+endfunction
+
 function! k8s#node#yaml() abort
   let node = s:get_node()
   let name = node.metadata.name

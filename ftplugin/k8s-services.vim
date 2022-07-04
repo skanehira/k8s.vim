@@ -15,3 +15,6 @@ nnoremap <buffer> <silent> <Plug>(k8s:svcs:delete)
 
 nnoremap <buffer> <silent> <Plug>(k8s:svcs:yaml)
       \ <Cmd>call k8s#do_action('services:yaml')<CR>
+
+nnoremap <buffer> <silent> <Plug>(k8s:svcs:edit)
+      \ <Cmd>call k8s#do_action('services:edit')<CR>

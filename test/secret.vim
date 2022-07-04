@@ -30,7 +30,7 @@ endfunction
 function s:suite.yaml()
   call k8s#do_action('secrets:yaml')
   call BufferNotEmpty(bufnr())
-  call s:assert.equals(&ft, 'yaml')
+  call s:assert.equals(&ft, 'k8s-secrets-yaml')
 endfunction
 
 function s:suite.edit()

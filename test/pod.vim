@@ -26,7 +26,7 @@ endfunction
 function! s:suite.yaml()
   call k8s#do_action('pods:yaml')
   call BufferNotEmpty(bufnr())
-  call s:assert.equals(&ft, 'yaml')
+  call s:assert.equals(&ft, 'k8s-pods-yaml')
 endfunction
 
 function! s:suite.events()
@@ -58,6 +58,12 @@ function! s:suite.shell()
   call s:expect(bufnr()).job_status_to_be('running')
 endfunction
 
+function s:suite.edit()
+  call k8s#do_action('pods:edit')
+  call BufferNotEmpty(bufnr())
+  call s:expect(bufnr()).job_status_to_be('running')
+endfunction
+
 function! s:suite.delete()
   call k8s#do_action('pods:delete')
   call k8s#kubectl('wait', 'pod/sample-pod', '--for', 'delete')
@@ -70,3 +76,4 @@ function! s:suite.kill()
   let result = k8s#kubectl('get', 'pod', '--field-selector=metadata.name=sample-pod')
   call s:assert.equals(result, 'No resources found in default namespace.')
 endfunction
+

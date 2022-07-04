@@ -239,6 +239,9 @@ You can define your own keymaps like below.
 *<Plug>(k8s:nodes:pods)*
   Show node's pods.
 
+*<Plug>(k8s:nodes:edit)*
+  Edit node with $EDITOR in terminal.
+
 							*k8s-containers-key-mappings*
 *<Plug>(k8s:pods:containers:shell)*
   Run `/bin/sh` in container.
@@ -270,6 +273,9 @@ You can define your own keymaps like below.
 *<Plug>(k8s:pods:kill)*
   Force delete pod.
 
+*<Plug>(k8s:pods:edit)*
+  Edit pod with $EDITOR in terminal.
+
 							*k8s-services-key-mappings*
 *<Plug>(k8s:svcs:pods)*
   Show service's pods.
@@ -279,6 +285,9 @@ You can define your own keymaps like below.
 
 *<Plug>(k8s:svcs:delete)*
   Delete service.
+
+*<Plug>(k8s:svcs:edit)*
+  Edit service with $EDITOR in terminal.
 
 							*k8s-secrets-key-mappings*
 *<Plug>(k8s:secrets:describe)*

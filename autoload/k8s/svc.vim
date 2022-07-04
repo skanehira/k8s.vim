@@ -15,6 +15,13 @@ function! k8s#svc#pods() abort
   exe printf('drop k8s://pods/list?namespace=all&labels=%s', labels)
 endfunction
 
+function! k8s#svc#edit() abort
+  let svc = s:get_svc()
+  let namespace = svc.metadata.namespace
+  let name = svc.metadata.name
+  call k8s#util#terminal#kubectl('edit', 'svc', name, '-n', namespace)
+endfunction
+
 function! k8s#svc#describe() abort
   let svc = s:get_svc()
   let namespace = svc.metadata.namespace

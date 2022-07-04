@@ -110,3 +110,10 @@ function! k8s#pod#events() abort
   let pod = s:get_pod()
   exe printf('drop k8s://events/list?namespace=%s&name=%s', pod.metadata.namespace, pod.metadata.name)
 endfunction
+
+function! k8s#pod#edit() abort
+  let pod = s:get_pod()
+  let namespace = pod.metadata.namespace
+  let name = pod.metadata.name
+  call k8s#util#terminal#kubectl('edit', 'pod', name, '-n', namespace)
+endfunction
