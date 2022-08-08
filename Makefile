@@ -7,7 +7,7 @@ NVIM := $${DENOPS_TEST_NVIM:-$$(which nvim)}
 test:
 	@DENOPS_PATH=$(DENOPS) \
 		DENOPS_TEST_NVIM=$(NVIM) \
-		DENOPS_TEST_VIM=$(Vim) \
+		DENOPS_TEST_VIM=$(VIM) \
 		TZ=UTC \
 		deno test -A --unstable
 
