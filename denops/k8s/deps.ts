@@ -4,7 +4,7 @@ export * from "https://deno.land/x/unknownutil@v2.1.0/mod.ts";
 export * from "https://deno.land/std@0.167.0/testing/asserts.ts";
 export * as autocmd from "https://deno.land/x/denops_std@v3.9.3/autocmd/mod.ts";
 export { default as stringWidth } from "https://cdn.skypack.dev/string-width@5.0.1?dts";
-export { Table } from "https://deno.land/x/cliffy@v0.25.4/table/mod.ts";
+export { Table } from "https://deno.land/x/cliffy@v0.25.5/table/mod.ts";
 export * as datetime from "https://deno.land/std@0.167.0/datetime/mod.ts";
 export * as vars from "https://deno.land/x/denops_std@v3.9.3/variable/mod.ts";
 export * from "https://deno.land/x/denops_std@v3.9.3/batch/mod.ts";
