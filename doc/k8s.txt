@@ -64,19 +64,19 @@ COMMANDS					*k8s-commands*
 
 :K8sPods					*:K8sPods*
   Open pod list buffer.
-  This is same as `:drop k8s://pods/list?namespace=all`
+  This is same as `:drop k8s://pods/list
 
 :K8sNodes					*:K8sNodes*
   Open node list buffer.
-  This is same as `:drop k8s://nodes/list?namespace=all`
+  This is same as `:drop k8s://nodes/list
 
 :K8sDeployments					*:K8sDeployments*
   Open deployment list buffer.
-  This is same as `drop k8s://deployments/list?namespace=all`
+  This is same as `drop k8s://deployments/list
 
 :K8sServices					*:K8sServices*
   Open service list buffer.
-  This is same as `:drop k8s://services/list?namespace=all`
+  This is same as `:drop k8s://services/list
 
 :K8sEvents					*:K8sEvents*
   Open event list buffer.
