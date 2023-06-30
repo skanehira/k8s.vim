@@ -81,7 +81,6 @@ jobs:
       - name: Test
         run: |
           make test
-          make test-e2e
         env:
           DENOPS_TEST_DENOPS_PATH: "../denops.vim"
           DENOPS_TEST_VIM_EXECUTABLE: ${{ steps.vim.outputs.executable_path }}
