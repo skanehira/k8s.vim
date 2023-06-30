@@ -3,61 +3,53 @@ import { IoK8sApiCoreV1EventList } from "./models/IoK8sApiCoreV1EventList.ts";
 import { Resource } from "./resource.ts";
 const dec = new TextDecoder();
 
-export async function run(cmd: string[]): Promise<string> {
-  const opt: Deno.RunOptions = {
-    cmd: cmd,
-    stdin: "null",
-    stdout: "piped",
-    stderr: "piped",
-  };
+export async function run(args: string[]): Promise<string> {
+  const cmd = new Deno.Command("kubectl", {
+    args,
+  });
 
-  const p = Deno.run(opt);
-  const result = dec.decode(await p.output());
+  const { code, stdout, stderr } = await cmd.output();
 
-  const status = await p.status();
-  if (!status.success) {
-    const error = dec.decode(await p.stderrOutput());
+  if (code !== 0) {
+    const error = dec.decode(stderr);
     throw new Error(
       `failed to execute command: '${
-        cmd.join(" ")
+        "kubectl " + args.join(" ")
       }', detail: '${error.trim()}'`,
     );
   }
 
-  p.stderr!.close();
-  p.close();
-  return result;
+  return dec.decode(stdout);
 }
 
 export async function getResourceAsText(
   resource: Resource,
 ): Promise<string> {
-  const cmd = [
-    "kubectl",
+  const args = [
     "get",
     resource.type,
   ];
 
   if (resource.opts?.name) {
-    cmd.push(resource.opts.name);
+    args.push(resource.opts.name);
   }
   if (resource.opts?.namespace) {
     if (resource.opts.namespace === "all") {
-      cmd.push("-A");
+      args.push("-A");
     } else {
-      cmd.push("-n", resource.opts.namespace);
+      args.push("-n", resource.opts.namespace);
     }
   }
   if (resource.opts?.format) {
-    cmd.push("-o", resource.opts.format);
+    args.push("-o", resource.opts.format);
   }
   if (resource.opts?.fields) {
-    cmd.push("--field-selector", resource.opts.fields);
+    args.push("--field-selector", resource.opts.fields);
   }
   if (resource.opts?.labels) {
-    cmd.push("-l", resource.opts.labels);
+    args.push("-l", resource.opts.labels);
   }
-  const output = await run(cmd);
+  const output = await run(args);
   return output;
 }
 
@@ -72,19 +64,18 @@ export async function describeResource(resource: string, name: string, opts?: {
   all?: boolean;
   namespace?: string;
 }): Promise<string> {
-  const cmd = [
-    "kubectl",
+  const args = [
     "describe",
     resource,
     name,
   ];
   if (opts?.all) {
-    cmd.push("-A");
+    args.push("-A");
   }
   if (opts?.namespace) {
-    cmd.push("-n", opts.namespace);
+    args.push("-n", opts.namespace);
   }
-  const output = await run(cmd);
+  const output = await run(args);
   return output;
 }
 
@@ -92,26 +83,24 @@ export async function deleteResource(resource: string, name: string, opts?: {
   namespace?: string;
   force?: boolean;
 }): Promise<void> {
-  const cmd = [
-    "kubectl",
+  const args = [
     "delete",
     resource,
     name,
   ];
   if (opts?.namespace) {
-    cmd.push("-n", opts.namespace);
+    args.push("-n", opts.namespace);
   }
   if (opts?.force) {
-    cmd.push("--force");
+    args.push("--force");
   }
-  await run(cmd);
+  await run(args);
 }
 
 export async function getEvents(
   resource: Resource,
 ): Promise<IoK8sApiCoreV1Event[]> {
-  const cmd = [
-    "kubectl",
+  const args = [
     "get",
     "events",
     "-A",
@@ -119,20 +108,20 @@ export async function getEvents(
   if (resource.opts) {
     const opts = resource.opts;
     if (opts.namespace) {
-      cmd.push(
+      args.push(
         "--field-selector",
         "involvedObject.namespace=" + opts.namespace,
       );
     }
     if (opts.name) {
-      cmd.push("--field-selector", "involvedObject.name=" + opts.name);
+      args.push("--field-selector", "involvedObject.name=" + opts.name);
     }
     if (opts.kind) {
-      cmd.push("--field-selector", "involvedObject.kind=" + opts.kind);
+      args.push("--field-selector", "involvedObject.kind=" + opts.kind);
     }
   }
-  cmd.push("-o", "json");
-  const output = await run(cmd);
+  args.push("-o", "json");
+  const output = await run(args);
   const result = JSON.parse(output) as IoK8sApiCoreV1EventList;
   return result.items;
 }
