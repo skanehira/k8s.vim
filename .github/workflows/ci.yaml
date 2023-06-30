@@ -19,7 +19,7 @@ jobs:
     name: deno lint
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: denoland/setup-deno@main
         with:
           deno-version: ${{ matrix.deno-version }}
@@ -37,8 +37,6 @@ jobs:
             nvim: "v0.8.0"
     runs-on: ${{ matrix.runner }}
     steps:
-      - run: git config --global core.autocrlf false
-        if: runner.os == 'Windows'
       - uses: actions/checkout@v3
         with:
           path: "./repo"
@@ -73,7 +71,7 @@ jobs:
       - name: Setup kind
         uses: engineerd/setup-kind@v0.5.0
         with:
-          version: "v0.14.0"
+          version: "v0.18.0"
       - name: Test
         run: |
           make test
@@ -82,6 +80,6 @@ jobs:
           DENOPS_TEST_DENOPS_PATH: "../denops.vim"
           DENOPS_TEST_VIM_EXECUTABLE: ${{ steps.vim.outputs.executable_path }}
           DENOPS_TEST_NVIM_EXECUTABLE: ${{ steps.nvim.outputs.executable_path }}
-          TWIHI_TEST_ENDPOINT: http://localhost:8080 
+          DENOPS_PATH: ${{ steps.denops.outputs.path }}
         timeout-minutes: 5
         working-directory: ./repo

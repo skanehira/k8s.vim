@@ -16,7 +16,7 @@ test-e2e:
 	@echo ==== test in Vim =====
 	@THEMIS_VIM=$(VIM) THEMIS_ARGS="-e -s -u DEFAULTS" themis --runtimepath $(DENOPS)
 	@echo ==== test in Neovim =====
-	@THEMIS_VIM=$(NVIM) THEMIS_ARGS="-e -s -u NORC" themis --runtimepath $(DENOPS)
+	@THEMIS_VIM=$(NVIM) THEMIS_ARGS="-e -s" themis --runtimepath $(DENOPS)
 
 .PHONY: deps
 deps:
