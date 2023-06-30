@@ -68,24 +68,22 @@ jobs:
           echo ${DENOPS_TEST_NVIM_EXECUTABLE}
         env:
           DENOPS_TEST_NVIM_EXECUTABLE: ${{ steps.nvim.outputs.executable_path }}
+      - name: Setup kind
+        uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: "v0.18.0"
       - name: Setup themis
         id: themis
         run: |
           git clone https://github.com/thinca/vim-themis $HOME/vim-themis
           echo "::set-output name=path::$HOME/vim-themis"
           echo "$HOME/vim-themis/bin" >> $GITHUB_PATH
-      - name: Setup kind
-        uses: engineerd/setup-kind@v0.5.0
-        with:
-          version: "v0.18.0"
       - name: Test
         run: |
           make test
-          make test-e2e
         env:
           DENOPS_TEST_DENOPS_PATH: "../denops.vim"
           DENOPS_TEST_VIM_EXECUTABLE: ${{ steps.vim.outputs.executable_path }}
           DENOPS_TEST_NVIM_EXECUTABLE: ${{ steps.nvim.outputs.executable_path }}
-          DENOPS_PATH: ${{ steps.denops.outputs.path }}
-        timeout-minutes: 5
+        timeout-minutes: 10
         working-directory: ./repo

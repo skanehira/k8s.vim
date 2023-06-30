@@ -46,7 +46,7 @@ export async function main(denops: Denops): Promise<void> {
 
   denops.dispatcher = {
     async loadBuffer(): Promise<void> {
-      const bufname = await denops.call("bufname") as string;
+      const bufname = (await denops.call("bufname")) as string;
       try {
         const resource = loadBuffer(bufname);
         await denops.dispatch(denops.name, "action", resource);
