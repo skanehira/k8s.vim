@@ -33,11 +33,19 @@ jobs:
         version:
           - "1.x"
         host_version:
-          - vim: "v8.2.3452"
-            nvim: "v0.6.0"
+          - vim: "v9.0.0472"
+            nvim: "v0.8.0"
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v2
+      - run: git config --global core.autocrlf false
+        if: runner.os == 'Windows'
+      - uses: actions/checkout@v3
+        with:
+          path: "./repo"
+      - uses: actions/checkout@v3
+        with:
+          repository: "vim-denops/denops.vim"
+          path: "./denops.vim"
       - uses: denoland/setup-deno@main
         with:
           deno-version: "${{ matrix.version }}"
@@ -49,9 +57,9 @@ jobs:
           download: "never"
       - name: Check Vim
         run: |
-          echo ${DENOPS_TEST_VIM}
+          echo ${DENOPS_TEST_VIM_EXECUTABLE}
         env:
-          DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable_path }}
+          DENOPS_TEST_VIM_EXECUTABLE: ${{ steps.vim.outputs.executable_path }}
       - uses: thinca/action-setup-vim@v1
         id: nvim
         with:
@@ -59,20 +67,9 @@ jobs:
           vim_version: "${{ matrix.host_version.nvim }}"
       - name: Check Neovim
         run: |
-          echo ${DENOPS_TEST_NVIM}
+          echo ${DENOPS_TEST_NVIM_EXECUTABLE}
         env:
-          DENOPS_TEST_NVIM: ${{ steps.nvim.outputs.executable_path }}
-      - name: Clone denops
-        id: denops
-        run: |
-          git clone https://github.com/vim-denops/denops.vim $HOME/denops.vim
-          echo "::set-output name=path::$HOME/denops.vim"
-      - name: Setup themis
-        id: themis
-        run: |
-          git clone https://github.com/thinca/vim-themis $HOME/vim-themis
-          echo "::set-output name=path::$HOME/vim-themis"
-          echo "$HOME/vim-themis/bin" >> $GITHUB_PATH
+          DENOPS_TEST_NVIM_EXECUTABLE: ${{ steps.nvim.outputs.executable_path }}
       - name: Setup kind
         uses: engineerd/setup-kind@v0.5.0
         with:
@@ -82,7 +79,9 @@ jobs:
           make test
           make test-e2e
         env:
-          DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable_path }}
-          DENOPS_TEST_NVIM: ${{ steps.nvim.outputs.executable_path }}
-          DENOPS_PATH: ${{ steps.denops.outputs.path }}
+          DENOPS_TEST_DENOPS_PATH: "../denops.vim"
+          DENOPS_TEST_VIM_EXECUTABLE: ${{ steps.vim.outputs.executable_path }}
+          DENOPS_TEST_NVIM_EXECUTABLE: ${{ steps.nvim.outputs.executable_path }}
+          TWIHI_TEST_ENDPOINT: http://localhost:8080 
         timeout-minutes: 5
+        working-directory: ./repo
